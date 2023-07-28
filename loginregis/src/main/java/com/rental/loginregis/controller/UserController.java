@@ -61,14 +61,24 @@ public class UserController {
     }
 
     public UserInfo setupNewUser(RegistrationModel registrationModel){
-        UserInfo newUser = new UserInfo();
-        newUser.setUsername(registrationModel.getUsername());
-        newUser.setPassword(passwordEncoder.encode(registrationModel.getPassword()));
-        newUser.setNamaKaryawan(registrationModel.getNamaKaryawan());
-        newUser.setNikKaryawan(registrationModel.getNikKaryawan());
-        newUser.setTelpKaryawan(registrationModel.getTelpKaryawan());
-        newUser.setAlamatKaryawan(registrationModel.getAlamatKaryawan());
-        newUser.setRoleKaryawan(registrationModel.getRoleKaryawan());
+        UserInfo newUser = new UserInfo(
+            registrationModel.getUsername(),
+            passwordEncoder.encode(registrationModel.getPassword()),
+            registrationModel.getNamaKaryawan(),
+            registrationModel.getNikKaryawan(),
+            registrationModel.getTelpKaryawan(),
+            registrationModel.getAlamatKaryawan(),
+            registrationModel.getRoleKaryawan()
+        );
+
+        // UserInfo newUser = new UserInfo();
+        // newUser.setUsername(registrationModel.getUsername());
+        // newUser.setPassword(passwordEncoder.encode(registrationModel.getPassword()));
+        // newUser.setNamaKaryawan(registrationModel.getNamaKaryawan());
+        // newUser.setNikKaryawan(registrationModel.getNikKaryawan());
+        // newUser.setTelpKaryawan(registrationModel.getTelpKaryawan());
+        // newUser.setAlamatKaryawan(registrationModel.getAlamatKaryawan());
+        // newUser.setRoleKaryawan(registrationModel.getRoleKaryawan());
         return newUser;
     }
 }

@@ -4,6 +4,7 @@ import com.rental.loginregis.dto.KaryawanDTO;
 import com.rental.loginregis.model.KaryawanEntity;
 import com.rental.loginregis.service.KaryawanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,11 +12,13 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/karyawan")
+// @PreAuthorize("hasAuthority('user')")
 public class KaryawanController {
 
     @Autowired
     KaryawanService karyawanService;
 
+    @PreAuthorize("hasAuthority('admin')")
     @PostMapping("/create")
     public KaryawanDTO create(@RequestBody KaryawanDTO request) {
         KaryawanEntity karyawanEntity = karyawanService.mapToEntity(request);
@@ -23,6 +26,7 @@ public class KaryawanController {
         return karyawanService.mapToDto(result);
     }
 
+    // @PreAuthorize("hasAuthority('admin')")
     @PutMapping("/update/{id}")
     public KaryawanDTO update(@PathVariable Long id, @RequestBody KaryawanDTO request) {
         KaryawanEntity karyawanEntity = karyawanService.mapToEntity(request);
@@ -30,6 +34,8 @@ public class KaryawanController {
         return karyawanService.mapToDto(result);
     }
 
+    // @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public List<KaryawanDTO> findAll() {
         return karyawanService.findAll().stream().map(karyawanEntity -> karyawanService.mapToDto(karyawanEntity))
@@ -55,6 +61,7 @@ public class KaryawanController {
         return karyawanDTO;
     }
 
+    @PreAuthorize("hasAuthority('admin')")
     @DeleteMapping("/delete/{id}")
     public Boolean delete(@PathVariable Long id) {
         return karyawanService.delete(id);

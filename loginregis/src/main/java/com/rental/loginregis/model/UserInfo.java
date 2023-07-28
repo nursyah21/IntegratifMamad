@@ -8,8 +8,9 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import java.util.Collections;
 import java.util.*;
+
 
 @Entity
 @Table( name = "karyawan",
@@ -17,14 +18,6 @@ import java.util.*;
                 @UniqueConstraint(columnNames = "username"),
         })
 public class UserInfo implements UserDetails {
-
-    @ManyToMany
-    @JoinTable(
-        name = "users_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,10 +51,30 @@ public class UserInfo implements UserDetails {
     @NotBlank
     @Size(max = 20)
     private String roleKaryawan;
+    
+    public String roles = "";
+  
 
+    public UserInfo(){}
 
-    public UserInfo() {
-
+    public UserInfo(
+        String username, 
+        String password,
+        String namaKaryawan,
+        String nikKaryawan,
+        String telpKaryawan,
+        String alamatKaryawan,
+        String roleKaryawan
+    ) {
+        this.username = username;
+        this.password = password;
+        this.namaKaryawan = namaKaryawan;
+        this.nikKaryawan = nikKaryawan;
+        this.telpKaryawan = telpKaryawan;
+        this.alamatKaryawan = alamatKaryawan;
+        this.roleKaryawan = roleKaryawan;
+        
+        this.roles = roleKaryawan;
     }
 
     public UserInfo(String username, String password) {
@@ -130,6 +143,7 @@ public class UserInfo implements UserDetails {
     }
 
     public void setRoleKaryawan(String roleKaryawan) {
+        // this.getAuthorities().add("ROLE_"+roleKaryawan);
         this.roleKaryawan = roleKaryawan;
     }
 
@@ -153,26 +167,18 @@ public class UserInfo implements UserDetails {
         return true;
     }
 
+    
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        }
+        authorities.add(new SimpleGrantedAuthority("ROLE_"+"USER"));
+//        authorities.add(new SimpleGrantedAuthority("ROLE_"+"ADMIN"));
+        
+        authorities.add(new SimpleGrantedAuthority("ROLE_"+ this.roles));
+        
         return authorities;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public void addRole(Role role) {
-        this.roles.add(role);
     }
 
 }

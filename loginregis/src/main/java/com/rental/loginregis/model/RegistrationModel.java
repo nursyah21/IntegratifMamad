@@ -44,7 +44,6 @@ public class RegistrationModel {
     private String roleKaryawan;
 
 
-
     public RegistrationModel(){
 
     }

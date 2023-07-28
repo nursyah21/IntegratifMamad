@@ -22,5 +22,5 @@ public class KaryawanEntity {
     private String nikKaryawan;
     private String telpKaryawan;
     private String alamatKaryawan;
-    private String roleKaryawan;
+    private String roleKaryawan; 
 }
