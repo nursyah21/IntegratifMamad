@@ -12,13 +12,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/karyawan")
+@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 // @PreAuthorize("hasAuthority('user')")
 public class KaryawanController {
 
     @Autowired
     KaryawanService karyawanService;
 
-    @PreAuthorize("hasAuthority('admin')")
+    
     @PostMapping("/create")
     public KaryawanDTO create(@RequestBody KaryawanDTO request) {
         KaryawanEntity karyawanEntity = karyawanService.mapToEntity(request);
@@ -26,7 +27,6 @@ public class KaryawanController {
         return karyawanService.mapToDto(result);
     }
 
-    // @PreAuthorize("hasAuthority('admin')")
     @PutMapping("/update/{id}")
     public KaryawanDTO update(@PathVariable Long id, @RequestBody KaryawanDTO request) {
         KaryawanEntity karyawanEntity = karyawanService.mapToEntity(request);
@@ -34,7 +34,6 @@ public class KaryawanController {
         return karyawanService.mapToDto(result);
     }
 
-    // @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public List<KaryawanDTO> findAll() {
@@ -61,7 +60,7 @@ public class KaryawanController {
         return karyawanDTO;
     }
 
-    @PreAuthorize("hasAuthority('admin')")
+    
     @DeleteMapping("/delete/{id}")
     public Boolean delete(@PathVariable Long id) {
         return karyawanService.delete(id);

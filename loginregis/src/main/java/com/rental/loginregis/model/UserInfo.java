@@ -52,7 +52,7 @@ public class UserInfo implements UserDetails {
     @Size(max = 20)
     private String roleKaryawan;
     
-    public String roles = "";
+    public static String roles = "";
   
 
     public UserInfo(){}
@@ -143,7 +143,6 @@ public class UserInfo implements UserDetails {
     }
 
     public void setRoleKaryawan(String roleKaryawan) {
-        // this.getAuthorities().add("ROLE_"+roleKaryawan);
         this.roleKaryawan = roleKaryawan;
     }
 
@@ -174,7 +173,6 @@ public class UserInfo implements UserDetails {
         
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_"+"USER"));
-//        authorities.add(new SimpleGrantedAuthority("ROLE_"+"ADMIN"));
         
         authorities.add(new SimpleGrantedAuthority("ROLE_"+ this.roles));
         
