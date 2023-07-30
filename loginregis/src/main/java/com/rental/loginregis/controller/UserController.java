@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rental.loginregis.model.Role;
 
 
+@CrossOrigin
 @RestController
 public class UserController {
 
@@ -36,7 +37,7 @@ public class UserController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @CrossOrigin
+    // @CrossOrigin
     @PostMapping("/login")
     public ResponseEntity<?> login (@RequestBody LoginInfo loginInfo){
         Authentication authentication = authenticationManager.authenticate(
@@ -50,7 +51,7 @@ public class UserController {
         return ResponseEntity.ok(loginResponse);
     }
 
-    @CrossOrigin
+    // @CrossOrigin
     @PostMapping("/registration")
     public ResponseEntity<?>registration (@RequestBody @Valid RegistrationModel registrationModel){
         if(userInfoRepository.findByUsername(registrationModel.getUsername()).isPresent()){

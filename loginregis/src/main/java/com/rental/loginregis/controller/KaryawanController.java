@@ -6,19 +6,23 @@ import com.rental.loginregis.service.KaryawanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/karyawan")
-// @PreAuthorize("hasAuthority('user')")
 public class KaryawanController {
 
     @Autowired
     KaryawanService karyawanService;
 
-    // @PreAuthorize("hasAuthority('admin')")
+    private static final Logger LOGGER = LoggerFactory.getLogger(KaryawanController.class);
+    
     @PostMapping("/create")
     public KaryawanDTO create(@RequestBody KaryawanDTO request) {
         KaryawanEntity karyawanEntity = karyawanService.mapToEntity(request);
@@ -26,7 +30,7 @@ public class KaryawanController {
         return karyawanService.mapToDto(result);
     }
 
-    // @PreAuthorize("hasAuthority('admin')")
+    
     @PutMapping("/update/{id}")
     public KaryawanDTO update(@PathVariable Long id, @RequestBody KaryawanDTO request) {
         KaryawanEntity karyawanEntity = karyawanService.mapToEntity(request);
@@ -34,10 +38,11 @@ public class KaryawanController {
         return karyawanService.mapToDto(result);
     }
 
-    // @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    // @CrossOrigin
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public List<KaryawanDTO> findAll() {
+        LOGGER.info("get all");
         return karyawanService.findAll().stream().map(karyawanEntity -> karyawanService.mapToDto(karyawanEntity))
                 .collect(Collectors.toList());
         //pliss don't show the password
