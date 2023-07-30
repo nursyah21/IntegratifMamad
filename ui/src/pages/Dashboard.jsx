@@ -1,9 +1,9 @@
 import { useEffect, useState,useRef } from 'react';
 import WelcomeBanner from "../components/WelcomeBanner";
 import { AUTH, USER } from '../components/type';
-import { buttonClass } from './Login';
 import { karyawanAllUrl } from '../components/url';
-import { Popover } from '@headlessui/react'
+import { Popover, Dialog } from '@headlessui/react'
+import { buttonModal, buttonClass } from '../css/style';
 
 const fetchData = async (auth) => {
   return fetch(karyawanAllUrl, {
@@ -17,25 +17,70 @@ const fetchData = async (auth) => {
 }
 
 function ListData({token = AUTH, role='', data=[]}){
-  const Tooltip = () => (<Popover className="relative">
+  const [isOpen, setIsOpen] = useState(false)
+  const [dialogProps, setDialogProps] = useState({title:'', id:''})
+
+  const Tooltip = (id) => (<Popover className="relative">
     <Popover.Button className={'border px-2 rounded-md bg-gray-200 border-gray-200 font-bold hover:bg-gray-100'}>:</Popover.Button>
 
     <Popover.Panel className="absolute z-10 bg-white -ml-14 ">
       <div className="flex flex-col border border-gray-200 rounded-xl">
         <div className='hover:bg-gray-200 p-2'>
-          <a href="/edit">
+          <button onClick={()=>{
+            setIsOpen(!isOpen)
+            setDialogProps({title:'Edit', id:id})
+          }}>
             <i className="fa fa-pencil mx-2" aria-hidden="true" />Edit
-          </a>
+          </button>
         </div>
         <div className='hover:bg-gray-200 p-2'>
-          <a href="/delete">  
+          <button onClick={()=>{
+            setIsOpen(!isOpen)
+            setDialogProps({title:'Delete', id:id})
+          }}>
             <i className='fa fa-trash mx-2' aria-hidden='true' />
             Delete
-          </a>
+          </button>
         </div>
       </div>
     </Popover.Panel>
   </Popover>)
+
+  const MyDialog = ({props=dialogProps}) => {
+    // const userData = 
+    // useEffect(()=>{
+
+    // },[])
+
+    return (
+      <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
+       {/* The backdrop, rendered as a fixed sibling to the panel container */}
+       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+
+        {/* Full-screen container to center the panel */}
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+            {/* The actual dialog panel  */}
+            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >{props.title}
+                  </Dialog.Title>
+            
+
+            <div>
+              {props.id.id}
+            </div>
+
+            <div className='gap-x-4 flex mt-2'>
+              <button className={`${buttonClass} !bg-red-600 hover:!bg-red-800`} onClick={() => setIsOpen(false)}>Submit</button>
+              <button className={[buttonClass]} onClick={() => setIsOpen(false)}>Cancel</button>
+            </div>
+          </Dialog.Panel>
+          </div>
+      </Dialog>
+    )
+  }
  
   return <>
   <div className='container px-4 mx-auto'>
@@ -50,6 +95,9 @@ function ListData({token = AUTH, role='', data=[]}){
         <input className='block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg pl-11 md:w-80 focus:border-blue-300 focus:ring focus:outline-none' type="text" placeholder='search by id'/>
       </div>
     </div>
+
+    {/* dialog edit/delete */}
+    <MyDialog />
 
     {/* table */}
     <div className='flex flex-col my-4 overflow-scroll'>
@@ -94,8 +142,7 @@ function ListData({token = AUTH, role='', data=[]}){
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center'>
                       {e.alamatKaryawan}
-                      <Tooltip />
-                      {/* {role === 'ADMIN' ? <Tooltip /> : null} */}
+                      {role === 'ADMIN' ? <Tooltip id={e.id} key={idx} /> : null}
                     </td>
                    </tr>
                 })
@@ -122,8 +169,6 @@ function Dashboard({token=AUTH }) {
     setUsername(token.username)
     fetchData(token.accessToken).then(data=>{
       setData(data)
-      console.log(data)
-      console.log(token.username)
       role.current = data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
     })
 

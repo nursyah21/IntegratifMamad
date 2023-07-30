@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.http.ResponseEntity;
+import java.util.Optional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ public class KaryawanController {
         return karyawanService.mapToDto(result);
     }
 
+    // only nama, nik, alamat, telp, dan role yang bisa diganti
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("/update/{id}")
     public KaryawanDTO update(@PathVariable Long id, @RequestBody KaryawanDTO request) {
@@ -42,7 +44,6 @@ public class KaryawanController {
     // @CrossOrigin
     @GetMapping("/all")
     public List<KaryawanDTO> findAll() {
-        LOGGER.info("get all");
         return karyawanService.findAll().stream().map(karyawanEntity -> karyawanService.mapToDto(karyawanEntity))
                 .collect(Collectors.toList());
         //pliss don't show the password
@@ -51,19 +52,24 @@ public class KaryawanController {
 
     @GetMapping("/{id}")
     public KaryawanDTO findById(@PathVariable Long id) {
-        KaryawanEntity karyawanEntity = karyawanService.finbById(id);
+        final KaryawanEntity result = karyawanService.finbById(id);
         // Convert KaryawanEntity to KaryawanDTO
-        KaryawanDTO karyawanDTO = new KaryawanDTO(
-                karyawanEntity.getId(),
-                karyawanEntity.getUsername(),
-                karyawanEntity.getPassword(),
-                karyawanEntity.getNamaKaryawan(),
-                karyawanEntity.getNikKaryawan(),
-                karyawanEntity.getTelpKaryawan(),
-                karyawanEntity.getAlamatKaryawan(),
-                karyawanEntity.getRoleKaryawan()
-        );
-        return karyawanDTO;
+        if(result == null){
+            return null;
+        }else{
+            KaryawanEntity karyawanEntity = karyawanService.finbById(id);
+            KaryawanDTO karyawanDTO = new KaryawanDTO(
+                    karyawanEntity.getId(),
+                    karyawanEntity.getUsername(),
+                    karyawanEntity.getPassword(),
+                    karyawanEntity.getNamaKaryawan(),
+                    karyawanEntity.getNikKaryawan(),
+                    karyawanEntity.getTelpKaryawan(),
+                    karyawanEntity.getAlamatKaryawan(),
+                    karyawanEntity.getRoleKaryawan()
+            );
+            return karyawanDTO;
+        }        
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")

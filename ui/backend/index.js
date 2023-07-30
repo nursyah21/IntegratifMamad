@@ -11,8 +11,6 @@ app.use(bodyParser.json())
 const LOGINREGIS = 'http://localhost:6969'
 
 app.post('/registration', async (req, res)=> {
-    
-    
     var data = await fetch(LOGINREGIS + req.path, {
         method: 'POST',
         headers: {
@@ -48,6 +46,64 @@ app.post('/karyawan/all', async (req,res) => {
         }}) 
         .then(data => data.json())
     
+    return res.send(data)
+});
+
+app.post('/karyawan/:id', async (req,res) => {
+    
+    var credentials =  'Bearer '+ req.body['token']
+    
+    var data = await fetch(LOGINREGIS + req.path, {
+        method: 'GET',
+        headers: {
+            'Authorization': credentials,
+            'Content-Type': 'application/json',
+        }
+    }) 
+    .then(data => data.text())
+    .catch(e=>res.send(e))
+    if(data === '')return res.send('user not found')
+    
+    return res.send(data)
+});
+
+// yang bisa diubah
+// namaKaryawan
+// nikKaryawan
+// telpKaryawan
+// alamatKaryawan
+// roleKaryawan
+app.post('/karyawan/update/:id', async (req,res) => {
+    var credentials =  'Bearer '+ req.body['token']    
+    var data = await fetch(LOGINREGIS + req.path, {
+        method: 'PUT',
+        headers: {
+            'Authorization': credentials,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(req.body['data'])
+    })
+    .then(data => data.text())
+    .catch(e=>res.send(e))
+    if(data === '')return res.send('user not found')
+    
+    return res.send(data)
+});
+
+app.post('/karyawan/delete/:id', async (req,res) => {
+    
+    var credentials =  'Bearer '+ req.body['token']
+    
+    var data = await fetch(LOGINREGIS + req.path, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': credentials,
+            'Content-Type': 'application/json',
+        }
+    }) 
+    .then(data => data.text())
+    .catch(e=>res.send(e))
+    if(data === '')return res.send('user not found')
     return res.send(data)
 });
 

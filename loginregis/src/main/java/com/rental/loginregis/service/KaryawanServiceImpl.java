@@ -9,7 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
-
+import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -22,6 +22,11 @@ public class KaryawanServiceImpl implements KaryawanService{
     @Autowired
     KaryawanRepository karyawanRepository;
 
+    private JdbcTemplate jdbcTemplate;
+
+    public KaryawanServiceImpl(JdbcTemplate jdbcTemplate){
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public KaryawanEntity create(KaryawanEntity karyawanEntity) {
@@ -34,6 +39,10 @@ public class KaryawanServiceImpl implements KaryawanService{
         KaryawanEntity result = finbById(id);
         if (result != null) {
             result.setNamaKaryawan(karyawanEntity.getNamaKaryawan());
+            result.setNikKaryawan(karyawanEntity.getNikKaryawan());
+            result.setTelpKaryawan(karyawanEntity.getTelpKaryawan());
+            result.setAlamatKaryawan(karyawanEntity.getAlamatKaryawan());
+            result.setRoleKaryawan(karyawanEntity.getRoleKaryawan());
             return karyawanRepository.save(result);
         }
         return null;
@@ -43,7 +52,17 @@ public class KaryawanServiceImpl implements KaryawanService{
     public Boolean delete(Long id) {
         final KaryawanEntity result = finbById(id);
         if (result != null) {
-            karyawanRepository.deleteById(id);
+            // karyawanRepository.deleteById(id);
+            // delete by manual because cascade not work, maybe sometimes will fix it
+            String sql1 = "DELETE FROM users_roles ur WHERE ur.user_id = ?";
+            String sql2 = "DELETE FROM role r WHERE r.id = ?";
+            String sql3 = "DELETE FROM karyawan k WHERE k.id = ?";
+
+            // Execute the query
+            jdbcTemplate.update(sql1, id);
+            jdbcTemplate.update(sql2, id);
+            jdbcTemplate.update(sql3, id);
+
             return true;
         }
         return false;

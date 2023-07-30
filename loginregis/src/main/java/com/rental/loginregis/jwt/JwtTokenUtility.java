@@ -23,6 +23,7 @@ public class JwtTokenUtility {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtility.class);
 
     public String generateAccessToken(UserInfo userInfo){
+        LOGGER.info("->",userInfo.getRoleKaryawan());
         return Jwts.builder()
                 .setSubject(userInfo.getUsername())
                 .setIssuer(ISSUER_NAME)
