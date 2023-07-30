@@ -27,6 +27,7 @@ public class JwtTokenUtility {
                 .setSubject(userInfo.getUsername())
                 .setIssuer(ISSUER_NAME)
                 .setIssuedAt(new Date())
+                .claim("roles", userInfo.getRoleKaryawan())
                 .setExpiration(new Date(System.currentTimeMillis()+PERIOD_OF_VALIDITY))
                 .signWith(SignatureAlgorithm.HS512,JWT_SECRET_KEY)
                 .compact();

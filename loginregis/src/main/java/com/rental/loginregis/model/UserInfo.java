@@ -10,6 +10,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collections;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Entity
@@ -51,8 +53,8 @@ public class UserInfo implements UserDetails {
     @NotBlank
     @Size(max = 20)
     private String roleKaryawan;
-    
-    public static String roles = "";
+    public static String roles1 ="";
+    // public static String roles = "";
   
 
     public UserInfo(){}
@@ -73,8 +75,7 @@ public class UserInfo implements UserDetails {
         this.telpKaryawan = telpKaryawan;
         this.alamatKaryawan = alamatKaryawan;
         this.roleKaryawan = roleKaryawan;
-        
-        this.roles = roleKaryawan;
+        this.roles1 = roleKaryawan;
     }
 
     public UserInfo(String username, String password) {
@@ -143,6 +144,7 @@ public class UserInfo implements UserDetails {
     }
 
     public void setRoleKaryawan(String roleKaryawan) {
+        // this.getAuthorities().add("ROLE_"+roleKaryawan);
         this.roleKaryawan = roleKaryawan;
     }
 
@@ -166,18 +168,41 @@ public class UserInfo implements UserDetails {
         return true;
     }
 
-    
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "users_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+     
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserInfo.class);
+ 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_"+"USER"));
         
-        authorities.add(new SimpleGrantedAuthority("ROLE_"+ this.roles));
+        for (Role role : roles) {    
+            authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getName()));
+        }
         
         return authorities;
+
     }
+ 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+ 
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+     
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
 
 }
 

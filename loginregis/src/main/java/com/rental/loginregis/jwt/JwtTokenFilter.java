@@ -14,8 +14,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import com.rental.loginregis.model.Role;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -61,12 +63,25 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         return true;
     }
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
+
     private UserInfo getUserDetails(String token){
         UserInfo userInfoDetails = new UserInfo();
         Jws<Claims> claimsJws = jwtTokenUtility.parseClaims(token);
         Claims claimsBody = claimsJws.getBody();
         String username = jwtTokenUtility.getUsername(token);
         userInfoDetails.setUsername(username);
+
+        String roles = (String) claimsBody.get("roles");
+        
+        roles = roles.replace("[", "").replace("]", "");
+        String[] roleNames = roles.split(",");
+        
+        for (String aRoleName : roleNames) {
+            userInfoDetails.addRole(new Role(aRoleName));
+            LOGGER.info("-> "+aRoleName);
+        }
+        
 
         return userInfoDetails;
     }

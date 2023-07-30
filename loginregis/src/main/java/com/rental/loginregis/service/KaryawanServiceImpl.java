@@ -4,12 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rental.loginregis.dto.KaryawanDTO;
 import com.rental.loginregis.model.KaryawanEntity;
 import com.rental.loginregis.repository.KaryawanRepository;
+import com.rental.loginregis.model.UserInfo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
 
 @Service
 @Transactional
@@ -17,6 +21,7 @@ public class KaryawanServiceImpl implements KaryawanService{
 
     @Autowired
     KaryawanRepository karyawanRepository;
+
 
     @Override
     public KaryawanEntity create(KaryawanEntity karyawanEntity) {

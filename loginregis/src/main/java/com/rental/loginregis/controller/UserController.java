@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import com.rental.loginregis.model.Role;
 
 
 @RestController
@@ -70,15 +71,7 @@ public class UserController {
             registrationModel.getAlamatKaryawan(),
             registrationModel.getRoleKaryawan()
         );
-
-        // UserInfo newUser = new UserInfo();
-        // newUser.setUsername(registrationModel.getUsername());
-        // newUser.setPassword(passwordEncoder.encode(registrationModel.getPassword()));
-        // newUser.setNamaKaryawan(registrationModel.getNamaKaryawan());
-        // newUser.setNikKaryawan(registrationModel.getNikKaryawan());
-        // newUser.setTelpKaryawan(registrationModel.getTelpKaryawan());
-        // newUser.setAlamatKaryawan(registrationModel.getAlamatKaryawan());
-        // newUser.setRoleKaryawan(registrationModel.getRoleKaryawan());
+        newUser.addRole(new Role(registrationModel.getRoleKaryawan()));
         return newUser;
     }
 }
