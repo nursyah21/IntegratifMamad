@@ -23,6 +23,7 @@ public class KaryawanController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KaryawanController.class);
     
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("/create")
     public KaryawanDTO create(@RequestBody KaryawanDTO request) {
         KaryawanEntity karyawanEntity = karyawanService.mapToEntity(request);
@@ -30,7 +31,7 @@ public class KaryawanController {
         return karyawanService.mapToDto(result);
     }
 
-    
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("/update/{id}")
     public KaryawanDTO update(@PathVariable Long id, @RequestBody KaryawanDTO request) {
         KaryawanEntity karyawanEntity = karyawanService.mapToEntity(request);
@@ -39,7 +40,6 @@ public class KaryawanController {
     }
 
     // @CrossOrigin
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public List<KaryawanDTO> findAll() {
         LOGGER.info("get all");
@@ -66,7 +66,7 @@ public class KaryawanController {
         return karyawanDTO;
     }
 
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
     public Boolean delete(@PathVariable Long id) {
         return karyawanService.delete(id);
