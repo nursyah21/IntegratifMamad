@@ -52,6 +52,26 @@ app.post('/karyawan/all', async (req,res) => {
     return res.send(data)
 });
 
+app.post('/karyawan/create', async (req,res) => {
+    var credentials =  'Bearer '+ req.body['token']   
+    try{
+        var data = await fetch(LOGINREGIS + req.path, {
+            method: 'POST',
+            headers: {
+                'Authorization': credentials,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(req.body['data'])
+        })
+        .then(data => data.text())
+        .catch(e=>res.send(e))
+        if(data === '')return res.send('fail to create an account')
+        return res.send(data)
+    }catch {
+        return res.send('error')
+    }
+});
+
 app.post('/karyawan/:id', async (req,res) => {
     
     var credentials =  'Bearer '+ req.body['token']

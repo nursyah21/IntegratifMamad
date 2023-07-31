@@ -103,10 +103,10 @@ export default function Register() {
               <div className="relative flex items-center mt-2 ">
                 <button type='button' className="absolute right-0 focus:outline-none rtl:left-0 rtl:right-auto" onClick={()=>setHidden(!hidden)}>
                   {hidden ? <i className='fa fa-eye-slash mx-4' />  : <i className='fa fa-eye mx-4' /> }
-                  
                 </button>
                 <Field name="password" type={`${hidden ? 'password' : 'text'}`} className={`${inputClass} !mt-0`}  placeholder='password' />
               </div>
+              <ErrorMessage name="password" component="div" />
             </div>
 
             <div className='mb-4'>
