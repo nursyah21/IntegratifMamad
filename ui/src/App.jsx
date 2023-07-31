@@ -1,15 +1,12 @@
-import {
-  Routes,
-  Route,
-  useLocation
-} from 'react-router-dom';
+import {Routes,Route} from 'react-router-dom';
 
 import './css/style.css';
 
-// Import pages
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import { useEffect } from 'react';
+import { fetchData } from './components/fetchApi';
 
 
 function App() {

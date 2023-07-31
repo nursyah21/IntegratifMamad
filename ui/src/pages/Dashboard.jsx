@@ -7,7 +7,7 @@ import { buttonClass, inputClass } from '../css/style';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup'
 import { SelectRole } from './Register';
-import Loading from '../components/Loading';
+import { fetchData, fetchDataUser } from '../components/fetchApi';
 
 const schema = Yup.object({
   namaKaryawan: Yup.string().required("nama karyawan is required"),
@@ -17,26 +17,6 @@ const schema = Yup.object({
   roleKaryawan: Yup.string().required("role karyawan is required")
 })
 
-const fetchData = async (auth) => {
-  return fetch(karyawanAllUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({token: auth})
-  }).then(data => data.json())
-
-}
-
-const getDataUser = async (auth,id) => {
-  return fetch(karyawanIdUrl +id, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({token: auth})
-  }).then(data => data.json())
-}
 
 const NewUser = ({setData, setIsOpen}) => {
   const [role, setRole] = useState('ADMIN')
@@ -149,6 +129,8 @@ const NewUser = ({setData, setIsOpen}) => {
 function ListData({token = AUTH, role='', data=[], setData}){
   const [isOpen, setIsOpen] = useState(false)
   const [dialogProps, setDialogProps] = useState({title:'', id:''})
+  const searchValue = useRef()
+  const [errorSearch, setErrorSearch] = useState('')
 
   const Tooltip = (id) => (<Popover className="relative">
     <Popover.Button className={'border px-2 rounded-md bg-gray-200 border-gray-200 font-bold hover:bg-gray-100'}>:</Popover.Button>
@@ -184,7 +166,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
     const [role, setRole] = useState('USER')
     useEffect(()=>{
       if(props.id.id){
-        getDataUser(token.accessToken,  props.id.id).then(e=>{
+        fetchDataUser(token.accessToken,  props.id.id).then(e=>{
           setUserData(e)
           setRole(e.roleKaryawan)
         })
@@ -316,18 +298,45 @@ function ListData({token = AUTH, role='', data=[], setData}){
   }
 
   // ---------------------------------------------------------------
+
+  const handleSearch = (event) => {
+    if (event.key === "Enter") {
+      const val = searchValue.current.value
+      setErrorSearch('')
+      if(isNaN(val)){
+        setErrorSearch("you must enter only number")
+        return
+      }
+      if(val === '') {
+        fetchData(token.accessToken).then(data=>setData(data))
+      }else{
+        fetchDataUser(token.accessToken, val)
+        .then(data=>{
+          const temp = []
+          temp.push(data)
+          setData(temp)
+        })
+        .catch(_=>setErrorSearch(`id: ${val} not found`))
+      }
+    }
+  }
+
+  // -------------------------------------------------------------
  
   return <>
   <div className='container px-4 mx-auto'>
     <div className='mt-6 md:flex md:items-center md:justify-between '>
       {/* search */}
-      <div className='relative flex items-center '>
-        <span className='absolute'>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 mx-3 text-gray-400 dark:text-gray-600">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
-          </svg>
-        </span>
-        <input className='block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg pl-11 md:w-80 focus:border-blue-300 focus:ring focus:outline-none' type="text" placeholder='search by id'/>
+      <div className='flex flex-col'>
+        <div className='relative flex items-center '>
+          <span className='absolute'>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 mx-3 text-gray-400 dark:text-gray-600">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+            </svg>
+          </span>
+          <input ref={searchValue} className='block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg pl-11 md:w-80 focus:border-blue-300 focus:ring focus:outline-none' type="text" placeholder='search by id' onKeyDown={handleSearch}/>
+        </div>
+        {errorSearch != '' ? <div className='mt-2 text-sm text-center'>{errorSearch}</div> : null}
       </div>
 
       {/* button */}
@@ -347,24 +356,24 @@ function ListData({token = AUTH, role='', data=[], setData}){
       <div className="overflow-x border border-gray-200 dark:border-gray-700 md:rounded-lg">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 mb-16">
             <thead className="bg-gray-50 dark:bg-gray-800">
-              <tr>
-                <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NO.</th>
+              <tr className='text-left'>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NO.</th>
                 {/* <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">ID</th> */}
-                <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Username</th>
-                <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Nama Karyawan</th>
-                <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NIK</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Username</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Nama Karyawan</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NIK</th>
                 {role === 'ADMIN' ?
-                <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Role</th> : null
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Role</th> : null
                 }
-                <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Telp</th>
-                <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Alamat</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Telp</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Alamat</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y">
               {
                 data.map((e,idx)=>{
                    return <tr key={idx}>
-                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap '>
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {idx+1}
                     </td>
                     {/* <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
@@ -417,7 +426,7 @@ function Dashboard({token=AUTH }) {
     fetchData(token.accessToken).then(data=>{
       setData(data)
       role.current = data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
-    })
+    }).catch(e=>localStorage.clear() && window.location.reload())
   }, [])
 
   return (

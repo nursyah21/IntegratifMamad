@@ -38,9 +38,7 @@ app.post('/login', async (req, res)=> {
 })
 
 app.post('/karyawan/all', async (req,res) => {
-    
     var credentials =  'Bearer '+ req.body['token']
-    
     var data = await fetch(LOGINREGIS + req.path, {
         method: 'GET',
         headers: {
