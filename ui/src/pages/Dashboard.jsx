@@ -1,7 +1,7 @@
 import { useEffect, useState,useRef } from 'react';
 import WelcomeBanner from "../components/WelcomeBanner";
 import { AUTH, USER } from '../components/type';
-import { karyawanAllUrl, karyawanIdUrl, updateUrl } from '../components/url';
+import { deleteUrl, karyawanAllUrl, karyawanIdUrl, updateUrl } from '../components/url';
 import { Popover, Dialog } from '@headlessui/react'
 import { buttonClass, inputClass } from '../css/style';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
@@ -81,8 +81,24 @@ function ListData({token = AUTH, role='', data=[], setData}){
     },[])
 
 
-    const handleDelete = ({values}) => {
-      
+    const deleteUser = async () => {
+      await fetch(deleteUrl + props.id.id, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({token:token.accessToken})
+      }) .then(data => data.text()).catch(data => "")
+
+      fetchData(token.accessToken).then(data=>{
+        setData(data)
+        
+        if(token.username === userData.username){
+          window.location.reload()
+        }
+        
+        setIsOpen(false)
+      })
     }
 
     const updateUser = async (values) => {
@@ -172,11 +188,10 @@ function ListData({token = AUTH, role='', data=[], setData}){
                   ? <>
                     Are you sure to delete <span className='bg-gray-200 p-1'>{userData.username}</span>
                     <div className='gap-x-4 flex mt-2'>
-                        <button className={`${buttonClass} !bg-red-600 hover:!bg-red-800`} onClick={() => handleDelete()}>Delete</button>
+                        <button className={`${buttonClass} !bg-red-600 hover:!bg-red-800`} onClick={() => deleteUser()}>Delete</button>
                         <button className={[buttonClass]} onClick={() => setIsOpen(false)}>Cancel</button>
                       </div>
                     </> : <EditDialog />
-                    // : <EditDialog />
                 }
               </div>
           </Dialog.Panel>

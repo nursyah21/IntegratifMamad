@@ -57,6 +57,7 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false)
   const [wrong, setWrong] = useState(false)
   const [role, setRole] = useState('ADMIN')
+  const [hidden, setHidden] = useState(true)
 
   const register = async (values) => {
     setIsLoading(true)
@@ -98,9 +99,14 @@ export default function Register() {
             </div>
 
             <div className='mb-4'>
-              <label className="text-gray-700 dark:text-gray-200" htmlFor="emailAddress">Password</label>
-              <Field name="password" type="password" className={inputClass} placeholder='password' />
-              <ErrorMessage name="password" component="div" />
+              <label className="text-gray-700 dark:text-gray-200" htmlFor="password">Password</label>
+              <div className="relative flex items-center mt-2 ">
+                <button type='button' className="absolute right-0 focus:outline-none rtl:left-0 rtl:right-auto" onClick={()=>setHidden(!hidden)}>
+                  {hidden ? <i className='fa fa-eye-slash mx-4' />  : <i className='fa fa-eye mx-4' /> }
+                  
+                </button>
+                <Field name="password" type={`${hidden ? 'password' : 'text'}`} className={`${inputClass} !mt-0`}  placeholder='password' />
+              </div>
             </div>
 
             <div className='mb-4'>
