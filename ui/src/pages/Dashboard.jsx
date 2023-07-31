@@ -1,9 +1,21 @@
 import { useEffect, useState,useRef } from 'react';
 import WelcomeBanner from "../components/WelcomeBanner";
 import { AUTH, USER } from '../components/type';
-import { karyawanAllUrl } from '../components/url';
+import { karyawanAllUrl, karyawanIdUrl, updateUrl } from '../components/url';
 import { Popover, Dialog } from '@headlessui/react'
-import { buttonModal, buttonClass } from '../css/style';
+import { buttonClass, inputClass } from '../css/style';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import * as Yup from 'yup'
+import { SelectRole } from './Register';
+import Loading from '../components/Loading';
+
+const schema = Yup.object({
+  namaKaryawan: Yup.string().required("nama karyawan is required"),
+  nikKaryawan: Yup.number().required("nik karyawan is required"),
+  telpKaryawan: Yup.number().required("telp karyawan is required"),
+  alamatKaryawan: Yup.string().required("alamat karyawan is required"),
+  roleKaryawan: Yup.string().required("role karyawan is required")
+})
 
 const fetchData = async (auth) => {
   return fetch(karyawanAllUrl, {
@@ -16,7 +28,17 @@ const fetchData = async (auth) => {
 
 }
 
-function ListData({token = AUTH, role='', data=[]}){
+const getDataUser = async (auth,id) => {
+  return fetch(karyawanIdUrl +id, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({token: auth})
+  }).then(data => data.json())
+}
+
+function ListData({token = AUTH, role='', data=[], setData}){
   const [isOpen, setIsOpen] = useState(false)
   const [dialogProps, setDialogProps] = useState({title:'', id:''})
 
@@ -47,10 +69,88 @@ function ListData({token = AUTH, role='', data=[]}){
   </Popover>)
 
   const MyDialog = ({props=dialogProps}) => {
-    // const userData = 
-    // useEffect(()=>{
+    const [userData, setUserData] = useState()
+    const [role, setRole] = useState('USER')
+    useEffect(()=>{
+      if(props.id.id){
+        getDataUser(token.accessToken,  props.id.id).then(e=>{
+          setUserData(e)
+          setRole(e.roleKaryawan)
+        })
+      }
+    },[])
 
-    // },[])
+
+    const handleDelete = ({values}) => {
+      
+    }
+
+    const updateUser = async (values) => {
+      return await fetch(updateUrl + props.id.id, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({token:token.accessToken, data: values})
+      }) .then(data => data.text()).catch(data => "")
+    }
+
+    const EditDialog = () => userData?.namaKaryawan 
+      ? <>
+          <Formik
+            initialValues={{ namaKaryawan: userData.namaKaryawan, nikKaryawan: userData.nikKaryawan, roleKaryawan: userData.roleKaryawan, telpKaryawan: userData.telpKaryawan, alamatKaryawan: userData.alamatKaryawan}}
+            validationSchema={schema}
+            onSubmit={async values => {
+              values.roleKaryawan = role
+              
+              await updateUser(values)
+              fetchData(token.accessToken).then(data=>{
+                setData(data)
+                
+                if(token.username === userData.username &&
+                  data.find(e=>e.username === token.username).roleKaryawan != 'ADMIN'){
+                  window.location.reload()
+                }
+                
+                setIsOpen(false)
+              })
+              
+            }}
+          >
+            <Form>
+              <div className='mb-4'>
+                <label className="text-gray-700 dark:text-gray-200" htmlFor="namaKaryawan">Nama Karyawan</label>
+                <Field name="namaKaryawan" type="text" className={inputClass} placeholder='supriyadi'/>
+                <ErrorMessage name="namaKaryawan" component="div" />
+              </div>
+
+              <div className='mb-4'>
+                <label className="text-gray-700 dark:text-gray-200" htmlFor="nikKaryawan">Nik Karyawan</label>
+                <Field name="nikKaryawan" type="text" className={inputClass} placeholder='64060211' />
+                <ErrorMessage name="nikKaryawan" component="div" />
+              </div>
+
+              <div className='mb-4'>
+                <label className="text-gray-700 dark:text-gray-200" htmlFor="telpKaryawan">Telp Karyawan</label>
+                <Field name="telpKaryawan" type="text" className={inputClass} placeholder='62895295' />
+                <ErrorMessage name="telpKaryawan" component="div" />
+              </div>
+
+              <div className='mb-4'>
+                <label className="text-gray-700 dark:text-gray-200" htmlFor="alamatKaryawan">Alamat Karyawan</label>
+                <Field name="alamatKaryawan" type="text" className={inputClass} placeholder='jl. ketintang '/>
+                <ErrorMessage name="alamatKaryawan" component="div" />
+              </div>
+
+              <SelectRole role={role} setRole={setRole} />
+              <div className='gap-x-4 flex mt-4'>
+                <button className={`${buttonClass} !bg-green-600 hover:!bg-green-800`} type='submit'>Edit</button>
+                <button className={[buttonClass]} onClick={() => setIsOpen(false)}>Cancel</button>
+              </div>
+            </Form>
+          </Formik>
+        </> 
+      : <>Loading...</>
 
     return (
       <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
@@ -64,18 +164,21 @@ function ListData({token = AUTH, role='', data=[]}){
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
-                  >{props.title}
+                  >{props.title} {userData != undefined ? <>- {userData.username}</> : null}
                   </Dialog.Title>
             
-
-            <div>
-              {props.id.id}
-            </div>
-
-            <div className='gap-x-4 flex mt-2'>
-              <button className={`${buttonClass} !bg-red-600 hover:!bg-red-800`} onClick={() => setIsOpen(false)}>Submit</button>
-              <button className={[buttonClass]} onClick={() => setIsOpen(false)}>Cancel</button>
-            </div>
+              <div className='my-4'>
+                { userData != undefined && props.title === 'Delete' 
+                  ? <>
+                    Are you sure to delete <span className='bg-gray-200 p-1'>{userData.username}</span>
+                    <div className='gap-x-4 flex mt-2'>
+                        <button className={`${buttonClass} !bg-red-600 hover:!bg-red-800`} onClick={() => handleDelete()}>Delete</button>
+                        <button className={[buttonClass]} onClick={() => setIsOpen(false)}>Cancel</button>
+                      </div>
+                    </> : <EditDialog />
+                    // : <EditDialog />
+                }
+              </div>
           </Dialog.Panel>
           </div>
       </Dialog>
@@ -102,12 +205,13 @@ function ListData({token = AUTH, role='', data=[]}){
     {/* table */}
     <div className='flex flex-col my-4 overflow-scroll'>
       <div className="overflow-x border border-gray-200 dark:border-gray-700 md:rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 mb-16">
             <thead className="bg-gray-50 dark:bg-gray-800">
               <tr>
                 <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NO.</th>
-                <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">ID</th>
+                {/* <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">ID</th> */}
                 <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Username</th>
+                <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Nama Karyawan</th>
                 <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NIK</th>
                 {role === 'ADMIN' ?
                 <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Role</th> : null
@@ -123,11 +227,14 @@ function ListData({token = AUTH, role='', data=[]}){
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap '>
                       {idx+1}
                     </td>
-                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
+                    {/* <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.id}
-                    </td>
+                    </td> */}
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.username}
+                    </td>
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
+                      {e.namaKaryawan}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.nikKaryawan}
@@ -171,7 +278,6 @@ function Dashboard({token=AUTH }) {
       setData(data)
       role.current = data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
     })
-
   }, [])
 
   return (
@@ -194,7 +300,7 @@ function Dashboard({token=AUTH }) {
 
             {/* Dashboard actions */}
             <div className="sm:flex sm:justify-between sm:items-center mb-8">
-              <ListData token={token} role={role.current} data={data}/>
+              <ListData token={token} role={role.current} data={data} setData={setData}/>
             </div>
 
 

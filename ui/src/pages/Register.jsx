@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useFormik, Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
+import { Formik, Field, Form, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from "yup"
 import Loading from '../components/Loading';
 import { registerUrl } from '../components/url';
@@ -26,6 +26,33 @@ const registerUser = async (credentials) => {
   }).then(data => data.text()).catch(data => "")
 }
 
+export const SelectRole = ({role, setRole}) =>  (<Listbox value={role} onChange={setRole}>
+  <Listbox.Button className={inputClass}>
+    <div className='flex justify-between items-center'>
+      <p className='text-left'>
+        {role}
+      </p>
+      <i className="fa fa-angle-down" aria-hidden="true" />
+    </div>
+  </Listbox.Button>
+  <Listbox.Options className={'outline-none'}>
+    {['ADMIN', 'USER'].map((i, idx) => (
+      <Listbox.Option
+        key={idx}
+        value={i}
+        className={({ active }) =>
+        `relative cursor-default select-none p-2 outline-none ${
+          active ? 'bg-gray-200' : ''
+        }`}
+      >
+        <p>
+          {i}
+        </p>
+      </Listbox.Option>
+    ))}
+  </Listbox.Options>
+</Listbox>)
+
 export default function Register() {
   const [isLoading, setIsLoading] = useState(false)
   const [wrong, setWrong] = useState(false)
@@ -46,29 +73,6 @@ export default function Register() {
       setIsLoading(false)
     }
   }
-
-  const SelectRole = () =>  (<Listbox value={role} onChange={setRole} name='roleKaryawan'>
-      <Listbox.Button className={inputClass}>
-        <div className='flex justify-between items-center'>
-          <p className='text-left'>
-            {role}
-          </p>
-          <i className="fa fa-angle-down" aria-hidden="true" />
-        </div>
-      </Listbox.Button>
-      <Listbox.Options>
-        {['ADMIN', 'USER'].map((i, idx) => (
-          <Listbox.Option
-            key={idx}
-            value={i}
-          >
-            <p className='border p-2 hover:bg-gray-200'>
-              {i}
-            </p>
-          </Listbox.Option>
-        ))}
-      </Listbox.Options>
-    </Listbox>)
   
   if(isLoading){
     return <Loading visible={true} message='Register...'/>
@@ -126,7 +130,8 @@ export default function Register() {
             
             <div className='mb-4'>
               <label className="text-gray-700 dark:text-gray-200" htmlFor="roleKaryawan">Role Karyawan</label>
-              <SelectRole/>
+              <SelectRole role={role} setRole={setRole} />
+              {/* <SelectRole/> */}
             </div>
 
             {wrong? 
