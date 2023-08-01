@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cd karyawan_new && ./mvnw spring-boot:run && cd ..
