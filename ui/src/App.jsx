@@ -9,8 +9,21 @@ import { useEffect } from 'react';
 import { fetchData } from './components/fetchApi';
 
 
+async function loginUser(credentials) {
+
+  return fetch(loginUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(credentials)
+  })
+    .then(data => data.json()).catch(data => "")
+}
+
 function App() {
-  const token = JSON.parse(localStorage.getItem('token'));
+  let token = JSON.parse(localStorage.getItem('token'));
+  
 
   return (
     <>
