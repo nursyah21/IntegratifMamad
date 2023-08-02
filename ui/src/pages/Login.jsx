@@ -70,7 +70,6 @@ export default function Login() {
                     {hidden ? <i className='fa fa-eye-slash mx-4' />  : <i className='fa fa-eye mx-4' /> }
                   </button>
                   <Field name="password" type={`${hidden ? 'password' : 'text'}`} className={`${inputClass} !mt-0`} />
-                  <ErrorMessage name="password" component="div" />
                 </div>
 
                 <ErrorMessage name="password" component="div" />
