@@ -80,7 +80,7 @@ const CreateNew = ({setData, setIsOpen}) => {
 
         <div className='mb-4'>
           <label className="text-gray-700 dark:text-gray-200" htmlFor="alamatPenyewa">Alamat Penyewa</label>
-          <Field name="alamatPenyewa" type="text" className={inputClass} placeholder='2017' />
+          <Field name="alamatPenyewa" type="text" className={inputClass} placeholder='' />
           <ErrorMessage name="alamatPenyewa" component="div" />
         </div>
         
@@ -140,10 +140,10 @@ function ListData({token = AUTH, role='', data=[], setData}){
     
 
     const deleteUser = async () => {
-      await fetch(baseURL + '/kendaraan/hapus-permanen/'+ props.id.id, {
+      await fetch(baseURL + '/penyewa/hapus-permanen/'+ props.id.id, {
         method: 'GET',
       })
-      await fetchDataKendaraan(role.current).then(data=>{
+      await fetchDataPenyewa(role.current).then(data=>{
         setData(data)
         setIsOpen(false)
       })
@@ -166,7 +166,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
       useEffect(()=>{
         (async function(){
-          fetchDataKendaraanId(props.id.id)
+          await fetchDataPenyewaId(props.id.id)
             .then(data=>{
               setStatus(data)
             })
@@ -176,7 +176,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
         <div>
           <Listbox value={selected} onChange={setSelected}>
             <Listbox.Button className={inputClass}>
-              {selected ? 'tersedia' : 'tidak tersedia'}
+              {selected ? 'sedang disewa' : 'tidak sedang disewa'}
             </Listbox.Button>
             <Listbox.Options className={'outline-none'}>
               {[true, false].map((i, idx)=> (
@@ -187,7 +187,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                   `relative cursor-default select-none p-2 outline-none ${
                     active ? 'bg-gray-200' : ''
                   }`}
-                >{i ? 'tersedia' : 'tidak tersedia'}</Listbox.Option>
+                >{i ? 'sedang disewa' : 'tidak sedang disewa'}</Listbox.Option>
               ))}
             </Listbox.Options>
           </Listbox>
@@ -196,12 +196,12 @@ function ListData({token = AUTH, role='', data=[], setData}){
         <div className='flex mt-4 justify-center'>
           <button onClick={()=>{
               (async function(){
-                const link = baseURL + '/kendaraan/status/' + props.id.id +'/' +(selected?'true':'false')
+                const link = baseURL + '/penyewa/sedang-sewa/' + props.id.id +'/' +(selected?'true':'false')
                 try{
                   await fetch(link ,{
                     method:'GET'
                   })
-                  await fetchDataKendaraan(role.current).then(data=>{
+                  await fetchDataPenyewa(role.current).then(data=>{
                     setData(data)
                     setIsOpen(false)
                   })
@@ -219,29 +219,28 @@ function ListData({token = AUTH, role='', data=[], setData}){
     }
 
     const EditDialog = () => {
-      const [data, setData] = useState(null)
+      const [dataEdit, setDataEdit] = useState(null)
 
       useEffect(()=>{
         (async function(){
-          fetchDataKendaraanId(props.id.id)
+          fetchDataPenyewaId(props.id.id)
             .then(data=>{
-              setData(data)
-              
+              setDataEdit(data)
+              console.log(data)
             })
         })()
-      })
+      },[])
       
-      return <> {data ? 
+      return <> {dataEdit ? 
           <Formik
       initialValues={{
-        merkKendaraan: data.merkKendaraan, tipeKendaraan: data.tipeKendaraan, jenisKendaraan: data.jenisKendaraan,tahunKeluaran: data.tahunKeluaran,kapasitasKursi: data.kapasitasKursi,hargaSewa: data.hargaSewa,idKendaraan:props.id.id
+        namaPenyewa: dataEdit.namaPenyewa, nikpenyewa: dataEdit.nikpenyewa, noTlpnPenyewa: dataEdit.noTlpnPenyewa,alamatPenyewa: dataEdit.alamatPenyewa
       }}
       validationSchema={schema}
       onSubmit={(values) => {
         (async function(){
             try{
-                
-                await fetch(baseURL+ '/kendaraan/edit', {
+                await fetch(baseURL+ '/penyewa/create', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
@@ -249,7 +248,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                   body: JSON.stringify(values)
                 }) .then(data => data.text())
 
-                await fetchDataKendaraan(role.current).then(data=>{
+                await fetchDataPenyewa(role.current).then(data=>{
                   setData(data)
                   setIsOpen(false)
                 })
@@ -262,41 +261,30 @@ function ListData({token = AUTH, role='', data=[], setData}){
     >
       <Form>
         <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="merKendaraan">Merk Kendaraan</label>
-          <Field name="merkKendaraan" type="text" className={inputClass} placeholder='Toyota'/>
-          <ErrorMessage name="merkKendaraan" component="div" />
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="namaPenyewa">Nama Penyewa</label>
+          <Field name="namaPenyewa" type="text" className={inputClass} placeholder=''/>
+          <ErrorMessage name="namaPenyewa" component="div" />
         </div>
 
         <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="tipeKendaraan">Tipe Kendaraan</label>
-          <Field name="tipeKendaraan" type="text" className={inputClass} placeholder='Avanza'/>
-          <ErrorMessage name="tipeKendaraan" component="div" />
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="nikpenyewa">NIK Penyewa</label>
+          <Field name="nikpenyewa" type="text" className={inputClass} placeholder=''/>
+          <ErrorMessage name="nikpenyewa" component="div" />
         </div>
 
         <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="jenisKendaraan">Jenis Kendaraan</label>
-          <Field name="jenisKendaraan" type="text" className={inputClass} placeholder='Mobil' />
-          <ErrorMessage name="jenisKendaraan" component="div" />
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="noTelpnPenyewa">No Telepon</label>
+          <Field name="noTlpnPenyewa" type="text" className={inputClass} placeholder='' />
+          <ErrorMessage name="noTlpnPenyewa" component="div" />
         </div>
 
         <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="tahunKeluaran">Tahun Kendaraan</label>
-          <Field name="tahunKeluaran" type="text" className={inputClass} placeholder='2017' />
-          <ErrorMessage name="tahunKeluaran" component="div" />
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="alamatPenyewa">Alamat Penyewa</label>
+          <Field name="alamatPenyewa" type="text" className={inputClass} placeholder='' />
+          <ErrorMessage name="alamatPenyewa" component="div" />
         </div>
 
-        <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="kapasitasKursi">Kapasitas Kursi</label>
-          <Field name="kapasitasKursi" type="text" className={inputClass} placeholder='jl. ketintang '/>
-          <ErrorMessage name="kapasitasKursi" component="div" />
-        </div>
-
-        <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="hargaSewa">Harga Sewa</label>
-          <Field name="hargaSewa" type="text" className={inputClass} placeholder='15000 '/>
-          <ErrorMessage name="hargaSewa" component="div" />
-        </div>
-        
+       
         <button type="submit" className={buttonClass} style={{width: '100%'}}>Submit</button>
 
       </Form>
@@ -446,11 +434,11 @@ function ListData({token = AUTH, role='', data=[], setData}){
                       {e.alamatPenyewa}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.statusHapus ? 'bisa dihapus' : 'tidak dihapus'}
+                      {e.statusHapus ? 'bisa' : 'tidak'}
                     </td>
 
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center'>
-                      {e.statusSedangSewa ? 'sedang disewa' : 'tidak disewa'}
+                      {e.statusSedangSewa ? 'disewa' : 'tidak disewa'}
                       {role === 'ADMIN' ? <Tooltip id={e.idPenyewa} key={idx} /> : null}
                     </td>
                   
