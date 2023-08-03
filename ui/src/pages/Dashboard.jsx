@@ -5,12 +5,28 @@ import { buttonClass, inputClass } from '../css/style';
 import { fetchData, fetchDataUser } from '../components/fetchApi';
 import KelolaKaryawan from './dashboard/KelolaKaryawan';
 import { Card, Box, CardContent, Typography, CardActions, Button } from '@mui/material';
+import KelolaPenyewa from './dashboard/KelolaPenyewa';
+import KelolaKendaraan from './dashboard/KelolaKendaraan';
+import KelolaTransaksi from './dashboard/KelolaTransaksi';
 
 
+
+export const fetchDataKendaraan = async (role) => {
+  try{
+    return fetch('http://localhost:5000' + (role == 'ADMIN' ? '/kendaraan/super-all' : '/kendaraan/all'), {
+      method: 'GET'
+    }).then(data=>data.json()).then(data=>data)
+  }catch(e){
+    console.log(e)
+  }
+  return {}
+  
+}
 
 function Dashboard({token=AUTH }) {
   const [username, setUsername] = useState('')
-  const [data, setData] = useState([])
+  const [dataKaryawan, setDataKaryawan] = useState([])
+  const [dataKendaraan, setDataKendaraan] = useState([])
   const role = useRef('')
   const [kelolaKaryawanPage, setKelolaKaryawanPage] = useState(false)
   const [kelolaTransaksiPage, setKelolaTransaksiPage] = useState(false)
@@ -26,7 +42,7 @@ function Dashboard({token=AUTH }) {
 
   const KaryawanCard = ({setOpen, Open}) => {
     return <>
-      <CardContent>
+      <CardContent >
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Karyawan
         </Typography>
@@ -120,11 +136,19 @@ function Dashboard({token=AUTH }) {
   </>}  
   
   useEffect(()=>{
-    setUsername(token.username)
-    fetchData(token.accessToken).then(data=>{
-      setData(data)
-      role.current = data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
-    }).catch(e=>localStorage.clear() && window.location.reload())
+    (async function(){
+      setUsername(token.username)
+      await fetchData(token.accessToken).then(data=>{
+        setDataKaryawan(data)
+        role.current = data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
+      }).catch(e=>localStorage.clear() && window.location.reload())
+  
+      // datakendaraan
+      await fetchDataKendaraan(role.current).then(data=>{
+        setDataKendaraan(data)
+      })
+    })()
+
   }, [])
 
   return (
@@ -168,7 +192,10 @@ function Dashboard({token=AUTH }) {
               </Box>
             </div>
             
-            {kelolaKaryawanPage ?  <KelolaKaryawan token={token} role={role.current} data={data} setData={setData}/> : null }
+            {kelolaKaryawanPage ?  <KelolaKaryawan className="bg-black" token={token} role={role.current} data={dataKaryawan} setData={setDataKaryawan}/> : null }
+            {kelolaPenyewaPage ?  <KelolaPenyewa token={token} role={role.current} data={dataKaryawan} setData={setDataKaryawan}/> : null }
+            {kelolaKendaraanPage ?  <KelolaKendaraan className="bg-black" role={role.current} data={dataKendaraan} setData={setDataKendaraan} /> : null }
+            {kelolaTransaksiPage ?  <KelolaTransaksi token={token} role={role.current} /> : null }
 
           </div>
         </main>

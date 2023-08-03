@@ -7,6 +7,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup'
 import { SelectRole } from '../Register';
 import { fetchData, fetchDataUser } from '../../components/fetchApi';
+import { Typography } from '@mui/material';
 
 const schema = Yup.object({
     namaKaryawan: Yup.string().required("nama karyawan is required"),
@@ -411,9 +412,13 @@ const schema = Yup.object({
   }
 
 export default function KelolaKaryawan({token, role, data, setData}) {
+  useEffect(()=>{
+    console.log(data)
+  })
+
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">
-        <ListData token={token} role={role.current} data={data} setData={setData}/>
+      <ListData token={token} role={role.current} data={data} setData={setData}/>
     </div>
   )
 }

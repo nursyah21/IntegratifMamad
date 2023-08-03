@@ -283,7 +283,7 @@ app.get('/kendaraan/super-all', async (req, res) => {
     var data = await fetch(YURIDAN + req.path, {
         method: 'GET',
     }).then(data => data.json())
-    console.log(data)
+    
     return res.json(data)
 })
 
@@ -300,7 +300,10 @@ app.get('/kendaraan/find/id::id', async (req, res) => {
     console.log(req.path)
     var data = await fetch(YURIDAN + req.path, {
         method: 'GET',
-    }).then(data => data.json())
+    }).then(data => data.json()).catch(e=>res.send(e))
+    if(data.error){
+        return res.send('error')
+    }
     console.log(data)
     return res.json(data)
 })
