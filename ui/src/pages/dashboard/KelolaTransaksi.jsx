@@ -309,7 +309,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                   </Dialog.Title>
             
               <div className='my-4'>
-              {props.title === 'create new penyewa'
+              {props.title === 'create new transaksi'
                 ? <CreateNew setData={setData} setIsOpen={setIsOpen} /> 
                 : props.title === 'Delete' 
                 ? <> Are you sure to delete 
@@ -383,9 +383,9 @@ function ListData({token = AUTH, role='', data=[], setData}){
       {/* button */}
       <button onClick={()=>{
         setIsOpen(true)
-        setDialogProps({title: 'create new penyewa', id: ''})
+        setDialogProps({title: 'create new transaksi', id: ''})
       }} className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600">
-          <i className='fa fa-plus' /><span>create new penyewa</span>
+          <i className='fa fa-plus' /><span>create new transaksi</span>
       </button>
     </div>
 
@@ -400,15 +400,17 @@ function ListData({token = AUTH, role='', data=[], setData}){
               <tr className='text-left'>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NO.</th>
                 {/* <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">ID</th> */}
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Nama Penyewa</th>
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NIK Penyewa</th>
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Telp</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Id Pegawai</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Id Kendaraan</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Versi Kendaraan</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Tanggal Sewa</th>
                 {/* {role === 'ADMIN' ?
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Role</th> : null
                 } */}
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Alamat</th>
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Status Hapus</th>
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Status Sedang Sewa</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Tanggal Kembali</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Id Penyewa</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">harga Sewa</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Total Harga Sewa</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y">
@@ -443,7 +445,8 @@ function ListData({token = AUTH, role='', data=[], setData}){
                     </td>
                   
                     </tr>
-                }) : null
+                }) 
+                : null
               }
             </tbody>
           </table>
@@ -461,7 +464,7 @@ export default function KelolaTransaksi({role, data, setData}) {
   },[])
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">
-        {/* <ListData role={role} data={data} setData={setData}/> */}
+        <ListData role={role} data={data} setData={setData}/>
     </div>
   )
 }
