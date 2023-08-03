@@ -424,17 +424,30 @@ function ListData({token = AUTH, role='', data=[], setData}){
                       {e.id}
                     </td> */}
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.namaPenyewa}
+                      {e.idPegawai}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.nikpenyewa}
+                      {e.idKendaraan}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.noTlpnPenyewa}
+                      {e.versiKendaraan}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.alamatPenyewa}
+                      {e.tanggalSewa}
                     </td>
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
+                      {e.tanggalKembali}
+                    </td>
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
+                      {e.idPenyewa}
+                    </td>
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
+                      {e.hargaSewa}
+                    </td>
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
+                      {e.totalHargaSewa}
+                    </td>
+{/* 
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.statusHapus ? 'bisa' : 'tidak'}
                     </td>
@@ -443,7 +456,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                       {e.statusSedangSewa ? 'disewa' : 'tidak disewa'}
                       {role === 'ADMIN' ? <Tooltip id={e.idPenyewa} key={idx} /> : null}
                     </td>
-                  
+                   */}
                     </tr>
                 }) 
                 : null

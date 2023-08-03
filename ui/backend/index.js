@@ -135,7 +135,6 @@ app.get('/transaksi/all', async (req, res) => {
         var data = await fetch(AKBAR + req.path, {
             method: 'GET',
         }).then(data => data.json())
-        // console.log(data)
         return res.json(data)
     }catch(e){
         console.log(e)
@@ -143,12 +142,12 @@ app.get('/transaksi/all', async (req, res) => {
     }
 })
 
-app.get('/transaksi/find/:id', async (req, res) => {
+app.get('/transaksi/find/id::id', async (req, res) => {
     var data = await fetch(AKBAR + req.path, {
         method: 'GET',
     }).then(data => data.json())
     console.log(data)
-    return res.json({})
+    return res.json(data)
 })
 
 app.post('/transaksi/baru', async (req,res) => {
