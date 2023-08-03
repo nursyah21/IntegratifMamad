@@ -11,25 +11,22 @@ import { RollerShadesClosedSharp } from '@mui/icons-material';
 import { fetchDataKendaraan } from '../Dashboard';
 
 
-  
+const schema = Yup.object({
+  merkKendaraan: Yup.string().required(),
+  tipeKendaraan: Yup.string().required(),
+  jenisKendaraan: Yup.string().required(),
+  tahunKeluaran: Yup.string().required(),
+  kapasitasKursi: Yup.number().required(),
+  hargaSewa: Yup.number().required(),
+})
   
 const CreateNew = ({setData, setIsOpen}) => {
   const [role, setRole] = useState('ADMIN')
   const [hidden, setHidden] = useState(true)
   const [wrong, setWrong] = useState(false)
   
-  const schema = Yup.object({
-    merkKendaraan: Yup.string().required(),
-    tipeKendaraan: Yup.string().required(),
-    jenisKendaraan: Yup.string().required(),
-    tahunKeluaran: Yup.string().required(),
-    kapasitasKursi: Yup.number().required(),
-    hargaSewa: Yup.number().required(),
-  })
-  
   const handle = async (values) => {
     try{
-      console.log(values)
       await fetch(baseURL+'/kendaraan/create', {
         method: 'POST',
         headers: {
@@ -41,12 +38,7 @@ const CreateNew = ({setData, setIsOpen}) => {
       await fetchDataKendaraan(role.current).then(data=>{
         setData(data)
           setIsOpen(false)
-        // setDataKendaraan(data)
       })
-      // fetchData(token.accessToken).then(data=>{
-      //   setData(data)
-      //   setIsOpen(false)
-      // })
 
     }catch(e){
       console.log(e)
@@ -133,6 +125,14 @@ function ListData({token = AUTH, role='', data=[], setData}){
         <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
+            setDialogProps({title:'Ubah Status', id:id})
+          }}>
+            <i className="fa fa-pencil mx-2" aria-hidden="true" />Ubah Status
+          </button>
+        </div>
+        <div className='hover:bg-gray-200 p-2'>
+          <button onClick={()=>{
+            setIsOpen(!isOpen)
             setDialogProps({title:'Delete', id:id})
           }}>
             <i className='fa fa-trash mx-2' aria-hidden='true' />
@@ -149,14 +149,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
   const MyDialog = ({props=dialogProps}) => {
     const [userData, setUserData] = useState()
     const [role, setRole] = useState('USER')
-    useEffect(()=>{
-      if(props.id.id){
-        fetchDataUser(token.accessToken,  props.id.id).then(e=>{
-          setUserData(e)
-          setRole(e.roleKaryawan)
-        })
-      }
-    },[])
+    
 
     
 
@@ -191,61 +184,98 @@ function ListData({token = AUTH, role='', data=[], setData}){
     }
 
     const EditDialog = () => {
-      return userData?.namaKaryawan ? <>
+      const [data, setData] = useState(null)
+
+      useEffect(()=>{
+        (async function(){
+          fetchDataKendaraanId(props.id.id)
+            .then(data=>{
+              setData(data)
+              
+            })
+          
+        })()
+      })
+      
+      return <> {data ? 
           <Formik
-            initialValues={{ namaKaryawan: userData.namaKaryawan, nikKaryawan: userData.nikKaryawan, roleKaryawan: userData.roleKaryawan, telpKaryawan: userData.telpKaryawan, alamatKaryawan: userData.alamatKaryawan}}
-            validationSchema={schema}
-            onSubmit={async values => {
-              values.roleKaryawan = role
-              
-              await updateUser(values)
-              fetchData(token.accessToken).then(data=>{
-                setData(data)
+      initialValues={{
+        merkKendaraan: data.merkKendaraan, tipeKendaraan: data.tipeKendaraan, jenisKendaraan: data.jenisKendaraan,tahunKeluaran: data.tahunKeluaran,kapasitasKursi: data.kapasitasKursi,hargaSewa: data.hargaSewa,idKendaraan:props.id.id
+      }}
+      validationSchema={schema}
+      onSubmit={(values) => {
+        (async function(){
+            try{
                 
-                if(token.username === userData.username &&
-                  data.find(e=>e.username === token.username).roleKaryawan != 'ADMIN'){
-                  window.location.reload()
-                }
-                
-                setIsOpen(false)
-              })
-              
+                await fetch(baseURL+ '/kendaraan/edit', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(values)
+                }) .then(data => data.text())
+
+                await fetchDataKendaraan(role.current).then(data=>{
+                  setData(data)
+                  setIsOpen(false)
+                })
+              }catch(e){
+              console.log(e)
             }}
-          >
-            <Form>
-              <div className='mb-4'>
-                <label className="text-gray-700 dark:text-gray-200" htmlFor="namaKaryawan">Nama Karyawan</label>
-                <Field name="namaKaryawan" type="text" className={inputClass} placeholder='supriyadi'/>
-                <ErrorMessage name="namaKaryawan" component="div" />
-              </div>
+        )()
+              
+      }}
+    >
+      <Form>
+        <div className='mb-4'>
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="merKendaraan">Merk Kendaraan</label>
+          <Field name="merkKendaraan" type="text" className={inputClass} placeholder='Toyota'/>
+          <ErrorMessage name="merkKendaraan" component="div" />
+        </div>
 
-              <div className='mb-4'>
-                <label className="text-gray-700 dark:text-gray-200" htmlFor="nikKaryawan">Nik Karyawan</label>
-                <Field name="nikKaryawan" type="text" className={inputClass} placeholder='64060211' />
-                <ErrorMessage name="nikKaryawan" component="div" />
-              </div>
+        <div className='mb-4'>
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="tipeKendaraan">Tipe Kendaraan</label>
+          <Field name="tipeKendaraan" type="text" className={inputClass} placeholder='Avanza'/>
+          <ErrorMessage name="tipeKendaraan" component="div" />
+        </div>
 
-              <div className='mb-4'>
-                <label className="text-gray-700 dark:text-gray-200" htmlFor="telpKaryawan">Telp Karyawan</label>
-                <Field name="telpKaryawan" type="text" className={inputClass} placeholder='62895295' />
-                <ErrorMessage name="telpKaryawan" component="div" />
-              </div>
+        <div className='mb-4'>
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="jenisKendaraan">Jenis Kendaraan</label>
+          <Field name="jenisKendaraan" type="text" className={inputClass} placeholder='Mobil' />
+          <ErrorMessage name="jenisKendaraan" component="div" />
+        </div>
 
-              <div className='mb-4'>
-                <label className="text-gray-700 dark:text-gray-200" htmlFor="alamatKaryawan">Alamat Karyawan</label>
-                <Field name="alamatKaryawan" type="text" className={inputClass} placeholder='jl. ketintang '/>
-                <ErrorMessage name="alamatKaryawan" component="div" />
-              </div>
+        <div className='mb-4'>
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="tahunKeluaran">Tahun Kendaraan</label>
+          <Field name="tahunKeluaran" type="text" className={inputClass} placeholder='2017' />
+          <ErrorMessage name="tahunKeluaran" component="div" />
+        </div>
 
-              <SelectRole role={role} setRole={setRole} />
-              <div className='gap-x-4 flex mt-4'>
-                <button className={`${buttonClass} !bg-green-600 hover:!bg-green-800`} type='submit'>Edit</button>
-                <button className={[buttonClass]} onClick={() => setIsOpen(false)}>Cancel</button>
-              </div>
-            </Form>
-          </Formik>
-        </> 
-      : <>Loading...</>
+        <div className='mb-4'>
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="kapasitasKursi">Kapasitas Kursi</label>
+          <Field name="kapasitasKursi" type="text" className={inputClass} placeholder='jl. ketintang '/>
+          <ErrorMessage name="kapasitasKursi" component="div" />
+        </div>
+
+        <div className='mb-4'>
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="hargaSewa">Harga Sewa</label>
+          <Field name="hargaSewa" type="text" className={inputClass} placeholder='15000 '/>
+          <ErrorMessage name="hargaSewa" component="div" />
+        </div>
+        
+        <button type="submit" className={buttonClass} style={{width: '100%'}}>Submit</button>
+
+      </Form>
+    </Formik> : <>please wait...</>}
+    </>
+     
+        
+         
+      
+      
+      
+        
+      
     }
 
     return (
@@ -266,15 +296,14 @@ function ListData({token = AUTH, role='', data=[], setData}){
               <div className='my-4'>
               {props.title === 'create new vehicle'
                 ? <CreateNew setData={setData} setIsOpen={setIsOpen} /> 
-                : userData != undefined && props.title === 'Delete' 
-                ? <>
-                  Are you sure to delete <span className='bg-gray-200 p-1'>{userData.username}</span>
-                  <div className='gap-x-4 flex mt-2'>
+                : props.title === 'Delete' 
+                ? <> Are you sure to delete 
+                    <div className='gap-x-4 flex mt-2'>
                       <button className={`${buttonClass} !bg-red-600 hover:!bg-red-800`} onClick={() => deleteUser()}>Delete</button>
                       <button className={[buttonClass]} onClick={() => setIsOpen(false)}>Cancel</button>
                     </div>
                   </> 
-                : <EditDialog />
+                : props.title === 'Edit' ? <EditDialog /> : <></>
                 }
               </div>
           </Dialog.Panel>
@@ -395,7 +424,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                     
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center'>
                       {e.statusHapus ? <>bisa</> : <>tidak bisa</>}
-                      {role === 'ADMIN' ? <Tooltip id={e.id} key={idx} /> : null}
+                      {role === 'ADMIN' ? <Tooltip id={e.idKendaraan} key={idx} /> : null}
                     </td>
                     </tr>
                 }) : null
@@ -412,10 +441,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
 export default function KelolaKendaraan({role, data, setData}) {
 
-  useEffect(()=>{
-    // console.log(data)
-    // console.log(role)
-  },[])
+  
 
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">
