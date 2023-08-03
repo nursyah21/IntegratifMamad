@@ -30,17 +30,23 @@ const CreateNew = ({setData, setIsOpen}) => {
   const handle = async (values) => {
     try{
       console.log(values)
-      await fetch(createKaryawanUrl, {
+      await fetch(baseURL+'/kendaraan/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({token:token.accessToken, data: values})
+        body: JSON.stringify(values)
       }) .then(data => data.text()).catch(data => "")
-      fetchData(token.accessToken).then(data=>{
+
+      await fetchDataKendaraan(role.current).then(data=>{
         setData(data)
-        setIsOpen(false)
+          setIsOpen(false)
+        // setDataKendaraan(data)
       })
+      // fetchData(token.accessToken).then(data=>{
+      //   setData(data)
+      //   setIsOpen(false)
+      // })
 
     }catch(e){
       console.log(e)
@@ -407,8 +413,8 @@ function ListData({token = AUTH, role='', data=[], setData}){
 export default function KelolaKendaraan({role, data, setData}) {
 
   useEffect(()=>{
-    console.log(data)
-    console.log(role)
+    // console.log(data)
+    // console.log(role)
   },[])
 
   return (
