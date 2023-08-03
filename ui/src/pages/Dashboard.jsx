@@ -8,12 +8,13 @@ import { Card, Box, CardContent, Typography, CardActions, Button } from '@mui/ma
 import KelolaPenyewa from './dashboard/KelolaPenyewa';
 import KelolaKendaraan from './dashboard/KelolaKendaraan';
 import KelolaTransaksi from './dashboard/KelolaTransaksi';
+import { baseURL } from '../components/url';
 
 
 
 export const fetchDataKendaraan = async (role) => {
   try{
-    return fetch('http://localhost:5000' + (role == 'ADMIN' ? '/kendaraan/super-all' : '/kendaraan/all'), {
+    return fetch(baseURL + (role == 'ADMIN' ? '/kendaraan/super-all' : '/kendaraan/all'), {
       method: 'GET'
     }).then(data=>data.json()).then(data=>data)
   }catch(e){
@@ -24,7 +25,18 @@ export const fetchDataKendaraan = async (role) => {
 
 export const fetchDataPenyewa = async (role) => {
   try{
-    return fetch('http://localhost:5000' + (role == 'ADMIN' ? '/penyewa/super-all' : '/penyewa/all'), {
+    return fetch(baseURL + (role == 'ADMIN' ? '/penyewa/super-all' : '/penyewa/all'), {
+      method: 'GET'
+    }).then(data=>data.json()).then(data=>data)
+  }catch(e){
+    console.log(e)
+  }
+  return {}
+}
+
+export const fetchDataTransaksi = async (role) => {
+  try{
+    return fetch(baseURL + '/transaksi/all' , {
       method: 'GET'
     }).then(data=>data.json()).then(data=>data)
   }catch(e){
@@ -38,6 +50,7 @@ function Dashboard({token=AUTH }) {
   const [dataKaryawan, setDataKaryawan] = useState([])
   const [dataKendaraan, setDataKendaraan] = useState([])
   const [dataPenyewa, setDataPenyewa] = useState([])
+  const [dataTransaksi, setDataTransaksi] = useState([])
   const role = useRef('')
   const [kelolaKaryawanPage, setKelolaKaryawanPage] = useState(false)
   const [kelolaTransaksiPage, setKelolaTransaksiPage] = useState(false)
@@ -162,6 +175,11 @@ function Dashboard({token=AUTH }) {
       await fetchDataPenyewa(role.current).then(data=>{
         setDataPenyewa(data)
       })
+
+      await fetchDataTransaksi(role.current).then(data=>{
+        setDataTransaksi(data)
+      })
+
     })()
 
   }, [])
@@ -210,7 +228,7 @@ function Dashboard({token=AUTH }) {
             {kelolaKaryawanPage ?  <KelolaKaryawan className="bg-black" token={token} role={role.current} data={dataKaryawan} setData={setDataKaryawan}/> : null }
             {kelolaPenyewaPage ?  <KelolaPenyewa token={token} role={role.current} data={dataPenyewa} setData={setDataPenyewa}/> : null }
             {kelolaKendaraanPage ?  <KelolaKendaraan className="bg-black" role={role.current} data={dataKendaraan} setData={setDataKendaraan} /> : null }
-            {kelolaTransaksiPage ?  <KelolaTransaksi token={token} role={role.current} /> : null }
+            {kelolaTransaksiPage ?  <KelolaTransaksi role={role.current} data={dataTransaksi} setData={setDataTransaksi} /> : null }
 
           </div>
         </main>

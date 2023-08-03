@@ -133,7 +133,7 @@ app.post('/karyawan/delete/:id', async (req,res) => {
 app.get('/transaksi/all', async (req, res) => {
     var data = await fetch(AKBAR + req.path, {
         method: 'GET',
-    }).then(data => data.text())
+    }).then(data => data.json())
     console.log(data)
     return res.json({data: data})
 })
