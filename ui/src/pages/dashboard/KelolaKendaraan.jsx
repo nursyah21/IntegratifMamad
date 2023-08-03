@@ -255,7 +255,6 @@ function ListData({token = AUTH, role='', data=[], setData}){
       onSubmit={(values) => {
         (async function(){
             try{
-                
                 await fetch(baseURL+ '/kendaraan/edit', {
                   method: 'POST',
                   headers: {
@@ -488,8 +487,6 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
 
 export default function KelolaKendaraan({role, data, setData}) {
-
-  
 
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">

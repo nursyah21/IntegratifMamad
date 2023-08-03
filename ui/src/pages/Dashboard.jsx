@@ -20,13 +20,24 @@ export const fetchDataKendaraan = async (role) => {
     console.log(e)
   }
   return {}
-  
+}
+
+export const fetchDataPenyewa = async (role) => {
+  try{
+    return fetch('http://localhost:5000' + (role == 'ADMIN' ? '/penyewa/super-all' : '/penyewa/all'), {
+      method: 'GET'
+    }).then(data=>data.json()).then(data=>data)
+  }catch(e){
+    console.log(e)
+  }
+  return {}
 }
 
 function Dashboard({token=AUTH }) {
   const [username, setUsername] = useState('')
   const [dataKaryawan, setDataKaryawan] = useState([])
   const [dataKendaraan, setDataKendaraan] = useState([])
+  const [dataPenyewa, setDataPenyewa] = useState([])
   const role = useRef('')
   const [kelolaKaryawanPage, setKelolaKaryawanPage] = useState(false)
   const [kelolaTransaksiPage, setKelolaTransaksiPage] = useState(false)
@@ -147,6 +158,10 @@ function Dashboard({token=AUTH }) {
       await fetchDataKendaraan(role.current).then(data=>{
         setDataKendaraan(data)
       })
+
+      await fetchDataPenyewa(role.current).then(data=>{
+        setDataPenyewa(data)
+      })
     })()
 
   }, [])
@@ -193,7 +208,7 @@ function Dashboard({token=AUTH }) {
             </div>
             
             {kelolaKaryawanPage ?  <KelolaKaryawan className="bg-black" token={token} role={role.current} data={dataKaryawan} setData={setDataKaryawan}/> : null }
-            {kelolaPenyewaPage ?  <KelolaPenyewa token={token} role={role.current} data={dataKaryawan} setData={setDataKaryawan}/> : null }
+            {kelolaPenyewaPage ?  <KelolaPenyewa token={token} role={role.current} data={dataPenyewa} setData={setDataPenyewa}/> : null }
             {kelolaKendaraanPage ?  <KelolaKendaraan className="bg-black" role={role.current} data={dataKendaraan} setData={setDataKendaraan} /> : null }
             {kelolaTransaksiPage ?  <KelolaTransaksi token={token} role={role.current} /> : null }
 

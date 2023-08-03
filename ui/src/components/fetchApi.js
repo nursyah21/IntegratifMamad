@@ -26,3 +26,9 @@ export const fetchDataKendaraanId = async (id) => {
     method: 'GET',
   }).then(data => data.json())
 }
+
+export const fetchDataPenyewaId = async (id) => {
+  return fetch(baseURL+'/penyewa/find/' +id, {
+    method: 'GET',
+  }).then(data => data.json())
+}
