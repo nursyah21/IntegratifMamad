@@ -228,7 +228,7 @@ function Dashboard({token=AUTH }) {
             {kelolaKaryawanPage ?  <KelolaKaryawan className="bg-black" token={token} role={role.current} data={dataKaryawan} setData={setDataKaryawan}/> : null }
             {kelolaPenyewaPage ?  <KelolaPenyewa token={token} role={role.current} data={dataPenyewa} setData={setDataPenyewa}/> : null }
             {kelolaKendaraanPage ?  <KelolaKendaraan className="bg-black" role={role.current} data={dataKendaraan} setData={setDataKendaraan} /> : null }
-            {kelolaTransaksiPage ?  <KelolaTransaksi role={role.current} data={dataTransaksi} setData={setDataTransaksi} /> : null }
+            {kelolaTransaksiPage ?  <KelolaTransaksi token={token} role={role.current} data={dataTransaksi} setData={setDataTransaksi} /> : null }
 
           </div>
         </main>

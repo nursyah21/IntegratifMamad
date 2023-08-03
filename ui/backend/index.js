@@ -143,11 +143,15 @@ app.get('/transaksi/all', async (req, res) => {
 })
 
 app.get('/transaksi/find/id::id', async (req, res) => {
-    var data = await fetch(AKBAR + req.path, {
-        method: 'GET',
-    }).then(data => data.json())
-    console.log(data)
-    return res.json(data)
+    try{
+        var data = await fetch(AKBAR + req.path, {
+            method: 'GET',
+        }).then(data => data.json())
+        console.log(data)
+        return res.json(data)
+    }catch(e){
+        return res.json({status: 'error'})
+    }
 })
 
 app.post('/transaksi/baru', async (req,res) => {

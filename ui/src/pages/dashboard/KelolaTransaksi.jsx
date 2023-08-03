@@ -7,26 +7,54 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup'
 import { Listbox } from '@headlessui/react';
 import { SelectRole } from '../Register';
-import { fetchData, fetchDataKendaraanId, fetchDataPenyewaId, fetchDataUser } from '../../components/fetchApi';
+import { fetchData, fetchDataKendaraanId, fetchDataPenyewaId, fetchDataTransaksiId, fetchDataUser } from '../../components/fetchApi';
 import { RollerShadesClosedSharp } from '@mui/icons-material';
-import { fetchDataKendaraan, fetchDataPenyewa } from '../Dashboard';
+import { fetchDataKendaraan, fetchDataPenyewa, fetchDataTransaksi } from '../Dashboard';
 
 
 const schema = Yup.object({
-  namaPenyewa: Yup.string().required(),
-  nikpenyewa: Yup.string().required(),
-  noTlpnPenyewa: Yup.string().required(),
-  alamatPenyewa: Yup.string().required(),
+  idKendaraan: Yup.number().required(),
+  tanggalSewa: Yup.date().required(),
+  tanggalKembali: Yup.date().required(),
+  idPenyewa: Yup.number().required(),
+  idPegawai: Yup.number().required(),
 })
   
-const CreateNew = ({setData, setIsOpen}) => {
+const CreateNew = ({token, setData, setIsOpen}) => {
   const [role, setRole] = useState('ADMIN')
   const [hidden, setHidden] = useState(true)
   const [wrong, setWrong] = useState(false)
   
   const handle = async (values) => {
     try{
-      await fetch(baseURL+'/penyewa/create', {
+      let kendaraan
+      try{
+        kendaraan = await fetchDataKendaraanId(values.idKendaraan)
+      }catch{
+        alert('id kendaraan not found')
+        throw 'id kendaraan not found'
+      }
+
+      let penyewa
+      try{
+        penyewa = await fetchDataPenyewaId(values.idPenyewa)
+      }catch{
+        alert('id penyewa not found')
+        throw 'id penyewa not found'
+      }
+
+      let pegawai
+      try{
+        console.log(token)
+        pegawai = await fetchDataUser(token, values.idPegawai)
+      }catch(e){
+        console.log(e)
+        alert('id pegawai not found')
+        throw 'id pegawai not found'
+      }
+
+
+      await fetch(baseURL+'/transaksi/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -34,7 +62,7 @@ const CreateNew = ({setData, setIsOpen}) => {
         body: JSON.stringify(values)
       }) .then(data => data.text()).catch(data => "")
 
-      await fetchDataPenyewa(role.current).then(data=>{
+      await fetchDataTransaksi(role.current).then(data=>{
         setData(data)
         setIsOpen(false)
       })
@@ -45,43 +73,49 @@ const CreateNew = ({setData, setIsOpen}) => {
   }
   
   return <>
-  {/* {
-    "namaPenyewa": "Jo",
-    "nikpenyewa": "12345675",
-    "noTlpnPenyewa": "081234567555",
-    "alamatPenyewa": "Jl. Contoh Alamat No. 123"
-} */}
 
     <Formik
       initialValues={{
-        namaPenyewa: '',nikpenyewa: '',noTlpnPenyewa: '',alamatPenyewa: ''
+        idKendaraan: null,tanggalSewa: null,tanggalKembali: null,idPenyewa: null, idPegawai: null
       }}
       validationSchema={schema}
       onSubmit={(values) => handle(values)}
     >
       <Form>
         <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="namaPenyewa">Nama Penyewa</label>
-          <Field name="namaPenyewa" type="text" className={inputClass} placeholder=''/>
-          <ErrorMessage name="namaPenyewa" component="div" />
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="idKendaraan">ID kendarran</label>
+          <Field name="idKendaraan" type="text" className={inputClass} placeholder=''/>
+          <ErrorMessage name="idKendaraan" component="div" />
         </div>
 
         <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="tipeKendaraan">Nik Penyewa</label>
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="tipeKendaraan">Tipe Kendaraan</label>
           <Field name="nikpenyewa" type="text" className={inputClass} placeholder=''/>
           <ErrorMessage name="nikpenyewa" component="div" />
         </div>
 
         <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="jenisKendaraan">No telp</label>
-          <Field name="noTlpnPenyewa" type="text" className={inputClass} placeholder='' />
-          <ErrorMessage name="noTlpnPenyewa" component="div" />
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="tanggalSewa">Tgl Sewa</label>
+          <Field type="date" name="tanggalSewa" className={inputClass} placeholder='' />
+          <ErrorMessage name="tanggalSewa" component="div" />
         </div>
 
         <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="alamatPenyewa">Alamat Penyewa</label>
-          <Field name="alamatPenyewa" type="text" className={inputClass} placeholder='' />
-          <ErrorMessage name="alamatPenyewa" component="div" />
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="tanggalKembali">Tgl Kembali</label>
+          <Field type="date" name="tanggalKembali" className={inputClass} placeholder='' />
+          <ErrorMessage name="tanggalKembali" component="div" />
+        </div>
+
+        <div className='mb-4'>
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="idPenyewa">ID Penyewa</label>
+          <Field name="idPenyewa" type="text" className={inputClass} placeholder='' />
+          <ErrorMessage name="idPenyewa" component="div" />
+        </div>
+
+        <div className='mb-4'>
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="idPegawai">ID Pegawai</label>
+          <Field name="idPegawai" type="text" className={inputClass} placeholder='' />
+          <ErrorMessage name="idPegawai" component="div" />
         </div>
         
         <button type="submit" className={buttonClass} style={{width: '100%'}}>Submit</button>
@@ -310,7 +344,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
             
               <div className='my-4'>
               {props.title === 'create new transaksi'
-                ? <CreateNew setData={setData} setIsOpen={setIsOpen} /> 
+                ? <CreateNew token={token.accessToken} setData={setData} setIsOpen={setIsOpen} /> 
                 : props.title === 'Delete' 
                 ? <> Are you sure to delete 
                     <div className='gap-x-4 flex mt-2'>
@@ -339,7 +373,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
         return
       }
       if(val === '') {
-        fetchDataPenyewa(role).then(data=>{
+        fetchDataTransaksi(role).then(data=>{
           if(data.error){
             setData([])
           }else{
@@ -348,7 +382,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
         }
         )
       }else{
-        fetchDataPenyewaId(val)
+        fetchDataTransaksiId(val)
         .then(data=>{
           if(data.status){
             throw ''
@@ -471,13 +505,13 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
 
 
-export default function KelolaTransaksi({role, data, setData}) {
-  useEffect(()=>{
-    console.log(data)
-  },[])
+export default function KelolaTransaksi({token, role, data, setData}) {
+  // useEffect(()=>{
+  //   console.log(data)
+  // },[])
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">
-        <ListData role={role} data={data} setData={setData}/>
+        <ListData token={token} role={role} data={data} setData={setData}/>
     </div>
   )
 }

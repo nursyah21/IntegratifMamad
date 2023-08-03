@@ -32,3 +32,9 @@ export const fetchDataPenyewaId = async (id) => {
     method: 'GET',
   }).then(data => data.json())
 }
+
+export const fetchDataTransaksiId = async (id) => {
+  return fetch(baseURL+'/transaksi/find/id:' +id, {
+    method: 'GET',
+  }).then(data => data.json())
+}
