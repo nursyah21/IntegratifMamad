@@ -337,12 +337,13 @@ app.post('/kendaraan/edit', async (req,res) => {
 
 app.get('/kendaraan/status/:id/:bool', async (req,res) => {
     try{
+        // console.log(req.path)
         var data = await fetch(YURIDAN + req.path, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             }
-        }).then(data => data.json())
+        }).then(data => data.json()).catch(e=>{})
 
         return res.json(data)
     }catch(e){

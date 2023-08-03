@@ -5,6 +5,7 @@ import { Popover, Dialog } from '@headlessui/react'
 import { buttonClass, inputClass } from '../../css/style';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup'
+import { Listbox } from '@headlessui/react';
 import { SelectRole } from '../Register';
 import { fetchData, fetchDataKendaraanId, fetchDataUser } from '../../components/fetchApi';
 import { RollerShadesClosedSharp } from '@mui/icons-material';
@@ -154,21 +155,11 @@ function ListData({token = AUTH, role='', data=[], setData}){
     
 
     const deleteUser = async () => {
-      await fetch(deleteUrl + props.id.id, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({token:token.accessToken})
-      }) .then(data => data.text()).catch(data => "")
-
-      fetchData(token.accessToken).then(data=>{
+      await fetch(baseURL + '/kendaraan/hapus-permanen/'+ props.id.id, {
+        method: 'GET',
+      })
+      await fetchDataKendaraan(role.current).then(data=>{
         setData(data)
-        
-        if(token.username === userData.username){
-          window.location.reload()
-        }
-        
         setIsOpen(false)
       })
     }
@@ -183,6 +174,65 @@ function ListData({token = AUTH, role='', data=[], setData}){
       }) .then(data => data.text()).catch(data => "")
     }
 
+    const UbahStatus = () => {
+      const [status, setStatus] = useState(null)
+      const [selected, setSelected] = useState('')
+
+
+      useEffect(()=>{
+        (async function(){
+          fetchDataKendaraanId(props.id.id)
+            .then(data=>{
+              setStatus(data)
+            })
+        })()
+      }, [])
+      return <> {status ? <>
+        <div>
+          <Listbox value={selected} onChange={setSelected}>
+            <Listbox.Button className={inputClass}>
+              {selected ? 'tersedia' : 'tidak tersedia'}
+            </Listbox.Button>
+            <Listbox.Options className={'outline-none'}>
+              {[true, false].map((i, idx)=> (
+                <Listbox.Option
+                key={idx}
+                value={i}
+                className={({ active }) =>
+                  `relative cursor-default select-none p-2 outline-none ${
+                    active ? 'bg-gray-200' : ''
+                  }`}
+                >{i ? 'tersedia' : 'tidak tersedia'}</Listbox.Option>
+              ))}
+            </Listbox.Options>
+          </Listbox>
+        </div>
+
+        <div className='flex mt-4 justify-center'>
+          <button onClick={()=>{
+              (async function(){
+                const link = baseURL + '/kendaraan/status/' + props.id.id +'/' +(selected?'true':'false')
+                try{
+                  await fetch(link ,{
+                    method:'GET'
+                  })
+                  await fetchDataKendaraan(role.current).then(data=>{
+                    setData(data)
+                    setIsOpen(false)
+                  })
+                }catch(e){
+                  console.log(e)
+                }
+
+              })()
+            }} className={buttonClass}>
+            Submit
+          </button>
+        </div>
+      </> : <>Loading ...</> }
+      </>
+    }
+
     const EditDialog = () => {
       const [data, setData] = useState(null)
 
@@ -193,7 +243,6 @@ function ListData({token = AUTH, role='', data=[], setData}){
               setData(data)
               
             })
-          
         })()
       })
       
@@ -267,14 +316,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
       </Form>
     </Formik> : <>please wait...</>}
-    </>
-     
-        
-         
-      
-      
-      
-        
+    </>  
       
     }
 
@@ -303,7 +345,8 @@ function ListData({token = AUTH, role='', data=[], setData}){
                       <button className={[buttonClass]} onClick={() => setIsOpen(false)}>Cancel</button>
                     </div>
                   </> 
-                : props.title === 'Edit' ? <EditDialog /> : <></>
+                : props.title === 'Edit' ? <EditDialog /> 
+                : <UbahStatus />
                 }
               </div>
           </Dialog.Panel>
@@ -391,6 +434,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Kursi</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Harga sewa</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Status Hapus</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Status Ketersediaan</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y">
@@ -422,8 +466,12 @@ function ListData({token = AUTH, role='', data=[], setData}){
                       {e.hargaSewa}
                     </td>
                     
-                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center'>
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.statusHapus ? <>bisa</> : <>tidak bisa</>}
+                    </td>
+
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center'>
+                      {e.statusKetersediaan ? <>tersedia</> : <>tidak tersedia</>}
                       {role === 'ADMIN' ? <Tooltip id={e.idKendaraan} key={idx} /> : null}
                     </td>
                     </tr>
