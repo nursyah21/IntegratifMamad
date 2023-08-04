@@ -407,7 +407,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
       <button onClick={()=>{
         setIsOpen(true)
         setDialogProps({title: 'create new vehicle', id: ''})
-      }} className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600">
+      }} className="flex items-center my-3 sm:my-0 justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600">
           <i className='fa fa-plus' /><span>create new vehicle</span>
       </button>
     </div>

@@ -202,24 +202,24 @@ function Dashboard({token=AUTH }) {
               </div>
             </WelcomeBanner>
 
-            <div className='flex gap-x-5'>
+            <div className='gap-y-5 sm:flex sm:gap-x-5'>
               <Box sx={{ minWidth: 275 }}>
-                <Card variant="elevation" className='max-w-sm'>
+                <Card variant="elevation" className='max-w-sm mb-5 sm:mb-0'>
                   <KaryawanCard setOpen={setKelolaKaryawanPage} Open={kelolaKaryawanPage} />
                 </Card>
               </Box>
               <Box sx={{ minWidth: 275 }}>
-                <Card variant="elevation" className='max-w-sm'>
+                <Card variant="elevation" className='max-w-sm mb-5 sm:mb-0'>
                   <TransaksiCard setOpen={setKelolaTransaksiPage} Open={kelolaTransaksiPage} />
                 </Card>
               </Box>
               <Box sx={{ minWidth: 275 }}>
-                <Card variant="elevation" className='max-w-sm'>
+                <Card variant="elevation" className='max-w-sm mb-5 sm:mb-0'>
                   <PenyewaCard setOpen={setKelolaPenyewaPage} Open={kelolaPenyewaPage} />
                 </Card>
               </Box>
               <Box sx={{ minWidth: 275 }}>
-                <Card variant="elevation" className='max-w-sm'>
+                <Card variant="elevation" className='max-w-sm mb-5 sm:mb-0'>
                   <KendaraanCard setOpen={setKelolaKendaraanPage} Open={kelolaKendaraanPage} />
                 </Card>
               </Box>

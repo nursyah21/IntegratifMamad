@@ -1,5 +1,5 @@
 export const baseURL = 'http://localhost:5000'
-// const baseURL = 'http://editio.serveo.net'
+// export const baseURL = 'http://proveho.serveo.net'
 
 export const loginUrl = baseURL + '/login'
 export const karyawanAllUrl = baseURL + '/karyawan/all'
