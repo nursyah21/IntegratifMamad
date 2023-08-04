@@ -5,6 +5,7 @@
     "dev": "echo \"remember to run backend\" && vite",
     "build": "vite build",
     "frontend": "vite build && http-server --proxy http://localhost:8080? dist/",
+    "serve":"http-server --proxy http://localhost:8080? dist/",
     "preview": "vite preview",
     "backend": "nodemon backend/index.js"
   },
