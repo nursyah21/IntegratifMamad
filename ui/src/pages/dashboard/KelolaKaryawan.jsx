@@ -411,24 +411,31 @@ const schema = Yup.object({
     </>
   }
 
-export default function KelolaKaryawan({token, role}) {
+export default function KelolaKaryawan({token}) {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
+  const [role, setRole] = useState('USER')
   useState(()=>{
     (async function(){
       setLoading(true)
+      // console.log(role)
       await fetchData(token.accessToken).then(data=>{
-        if(data.length)setData(data)
-        // role.current = data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
-      }).catch(e=>localStorage.clear() && window.location.reload())
+          if(data.length)setData(data)
+          setRole(data.find(e=>e.username === token.username).roleKaryawan)
+          if(token.username === userData.username &&
+            data.find(e=>e.username === token.username).roleKaryawan != 'ADMIN'){
+            window.location.reload()
+          }
+          
+        }).catch(e=>localStorage.clear() && window.location.reload())
       setLoading(false)
-  })()
+    })()
   },[])
  
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">
        {loading ? <>Loading ....</> : 
-        <ListData token={token} role={role.current} data={data} setData={setData}/>
+        <ListData token={token} role={role} data={data} setData={setData}/>
         }
     </div>
   )

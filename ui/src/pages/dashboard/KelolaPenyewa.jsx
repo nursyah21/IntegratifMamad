@@ -101,7 +101,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
   const Tooltip = (id) => (<Popover className="relative">
     <Popover.Button className={'border px-2 rounded-md bg-gray-200 border-gray-200 font-bold hover:bg-gray-100'}>:</Popover.Button>
 
-    <Popover.Panel className="absolute z-10 bg-white -ml-14 ">
+    <Popover.Panel className="absolute z-10 bg-white -ml-24 ">
       <div className="flex flex-col border border-gray-200 rounded-xl">
         <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
