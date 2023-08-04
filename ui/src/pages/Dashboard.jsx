@@ -162,12 +162,12 @@ function Dashboard({token=AUTH }) {
 
     (async function(){
       setUsername(token.username)
-      setLoading(true)
+      // setLoading(true)
       await fetchData(token.accessToken).then(data=>{
-        if(data.length)setDataKaryawan(data)
+        // if(data.length)setDataKaryawan(data)
         role.current = data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
       }).catch(e=>localStorage.clear() && window.location.reload())
-      setLoading(false)
+      // setLoading(false)
     })()
 
   }, [])
@@ -214,7 +214,7 @@ function Dashboard({token=AUTH }) {
               </Box>
             </div>
             
-            {kelolaKaryawanPage ?  <KelolaKaryawan className="bg-black" token={token} role={role.current} data={dataKaryawan} setData={setDataKaryawan}/> : null }
+            {kelolaKaryawanPage ?  <KelolaKaryawan className="bg-black" token={token} role={role.current} /> : null }
             {kelolaPenyewaPage ?  <KelolaPenyewa token={token} role={role.current} /> : null }
             {kelolaKendaraanPage ?  <KelolaKendaraan className="bg-black" role={role.current}  /> : null }
             {kelolaTransaksiPage ?  <KelolaTransaksi token={token} role={role.current} /> : null }

@@ -528,7 +528,7 @@ export default function KelolaTransaksi({token, role}) {
   
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">
-        {loading ? <>Loading ....</> : 
+      {loading ? <>Loading ....</> : 
         <ListData token={token} role={role} data={data} setData={setData}/>
       }
     </div>

@@ -475,7 +475,6 @@ export default function KelolaPenyewa({role}) {
         {loading ? <>Loading ....</> : 
         <ListData role={role} data={data} setData={setData}/>
       }
-        <ListData role={role} data={data} setData={setData}/>
     </div>
   )
 }

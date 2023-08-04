@@ -411,12 +411,25 @@ const schema = Yup.object({
     </>
   }
 
-export default function KelolaKaryawan({token, role, data, setData}) {
-  
-
+export default function KelolaKaryawan({token, role}) {
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(false)
+  useState(()=>{
+    (async function(){
+      setLoading(true)
+      await fetchData(token.accessToken).then(data=>{
+        if(data.length)setData(data)
+        // role.current = data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
+      }).catch(e=>localStorage.clear() && window.location.reload())
+      setLoading(false)
+  })()
+  },[])
+ 
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">
-      <ListData token={token} role={role.current} data={data} setData={setData}/>
+       {loading ? <>Loading ....</> : 
+        <ListData token={token} role={role.current} data={data} setData={setData}/>
+        }
     </div>
   )
 }
