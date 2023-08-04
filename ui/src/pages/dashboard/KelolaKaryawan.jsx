@@ -412,9 +412,7 @@ const schema = Yup.object({
   }
 
 export default function KelolaKaryawan({token, role, data, setData}) {
-  useEffect(()=>{
-    console.log(data)
-  })
+  
 
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">

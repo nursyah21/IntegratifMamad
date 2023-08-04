@@ -9,6 +9,7 @@ import KelolaPenyewa from './dashboard/KelolaPenyewa';
 import KelolaKendaraan from './dashboard/KelolaKendaraan';
 import KelolaTransaksi from './dashboard/KelolaTransaksi';
 import { baseURL } from '../components/url';
+import Loading from '../components/Loading';
 
 
 
@@ -48,14 +49,12 @@ export const fetchDataTransaksi = async (role) => {
 function Dashboard({token=AUTH }) {
   const [username, setUsername] = useState('')
   const [dataKaryawan, setDataKaryawan] = useState([])
-  const [dataKendaraan, setDataKendaraan] = useState([])
-  const [dataPenyewa, setDataPenyewa] = useState([])
-  const [dataTransaksi, setDataTransaksi] = useState([])
   const role = useRef('')
   const [kelolaKaryawanPage, setKelolaKaryawanPage] = useState(false)
   const [kelolaTransaksiPage, setKelolaTransaksiPage] = useState(false)
   const [kelolaPenyewaPage, setKelolaPenyewaPage] = useState(false)
   const [kelolaKendaraanPage, setKelolaKendaraanPage] = useState(false)
+  const [loading, setLoading] =useState(false)
 
   const signOut = () => {
     localStorage.clear()
@@ -160,26 +159,15 @@ function Dashboard({token=AUTH }) {
   </>}  
   
   useEffect(()=>{
+
     (async function(){
       setUsername(token.username)
+      setLoading(true)
       await fetchData(token.accessToken).then(data=>{
-        setDataKaryawan(data)
+        if(data.length)setDataKaryawan(data)
         role.current = data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
       }).catch(e=>localStorage.clear() && window.location.reload())
-  
-      // datakendaraan
-      await fetchDataKendaraan(role.current).then(data=>{
-        setDataKendaraan(data)
-      })
-
-      await fetchDataPenyewa(role.current).then(data=>{
-        setDataPenyewa(data)
-      })
-
-      await fetchDataTransaksi(role.current).then(data=>{
-        setDataTransaksi(data)
-      })
-
+      setLoading(false)
     })()
 
   }, [])
@@ -189,8 +177,9 @@ function Dashboard({token=AUTH }) {
 
       {/* Content area */}
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-hidden">
-
-        <main>
+        {
+          loading ? <>Loading ...</> : 
+          <main>
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
 
             {/* Welcome banner */}
@@ -226,12 +215,13 @@ function Dashboard({token=AUTH }) {
             </div>
             
             {kelolaKaryawanPage ?  <KelolaKaryawan className="bg-black" token={token} role={role.current} data={dataKaryawan} setData={setDataKaryawan}/> : null }
-            {kelolaPenyewaPage ?  <KelolaPenyewa token={token} role={role.current} data={dataPenyewa} setData={setDataPenyewa}/> : null }
-            {kelolaKendaraanPage ?  <KelolaKendaraan className="bg-black" role={role.current} data={dataKendaraan} setData={setDataKendaraan} /> : null }
-            {kelolaTransaksiPage ?  <KelolaTransaksi token={token} role={role.current} data={dataTransaksi} setData={setDataTransaksi} /> : null }
+            {kelolaPenyewaPage ?  <KelolaPenyewa token={token} role={role.current} /> : null }
+            {kelolaKendaraanPage ?  <KelolaKendaraan className="bg-black" role={role.current}  /> : null }
+            {kelolaTransaksiPage ?  <KelolaTransaksi token={token} role={role.current} /> : null }
 
           </div>
         </main>
+        }
 
       </div>
     </div>

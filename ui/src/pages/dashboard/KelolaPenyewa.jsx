@@ -10,6 +10,7 @@ import { SelectRole } from '../Register';
 import { fetchData, fetchDataKendaraanId, fetchDataPenyewaId, fetchDataUser } from '../../components/fetchApi';
 import { RollerShadesClosedSharp } from '@mui/icons-material';
 import { fetchDataKendaraan, fetchDataPenyewa } from '../Dashboard';
+import Loading from '../../components/Loading';
 
 
 const schema = Yup.object({
@@ -455,12 +456,25 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
 
 
-export default function KelolaPenyewa({role, data, setData}) {
+export default function KelolaPenyewa({role}) {
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState([])
+
   useEffect(()=>{
-    console.log(data)
+    (async function(){
+      setLoading(true)
+      await fetchDataPenyewa(role.current).then(data=>{
+        if(data.length)setData(data)
+      })
+      setLoading(false)
+    })()
   },[])
+
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">
+        {loading ? <>Loading ....</> : 
+        <ListData role={role} data={data} setData={setData}/>
+      }
         <ListData role={role} data={data} setData={setData}/>
     </div>
   )

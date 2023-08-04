@@ -10,6 +10,7 @@ import { SelectRole } from '../Register';
 import { fetchData, fetchDataKendaraanId, fetchDataUser } from '../../components/fetchApi';
 import { RollerShadesClosedSharp } from '@mui/icons-material';
 import { fetchDataKendaraan } from '../Dashboard';
+import Loading from '../../components/Loading';
 
 
 const schema = Yup.object({
@@ -28,6 +29,7 @@ const CreateNew = ({setData, setIsOpen}) => {
   
   const handle = async (values) => {
     try{
+      console.log('please wait..')
       await fetch(baseURL+'/kendaraan/create', {
         method: 'POST',
         headers: {
@@ -35,10 +37,10 @@ const CreateNew = ({setData, setIsOpen}) => {
         },
         body: JSON.stringify(values)
       }) .then(data => data.text()).catch(data => "")
-
+      
       await fetchDataKendaraan(role.current).then(data=>{
         setData(data)
-          setIsOpen(false)
+        setIsOpen(false)
       })
 
     }catch(e){
@@ -152,8 +154,6 @@ function ListData({token = AUTH, role='', data=[], setData}){
     const [role, setRole] = useState('USER')
     
 
-    
-
     const deleteUser = async () => {
       await fetch(baseURL + '/kendaraan/hapus-permanen/'+ props.id.id, {
         method: 'GET',
@@ -244,7 +244,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
               
             })
         })()
-      })
+      }, [])
       
       return <> {data ? 
           <Formik
@@ -486,11 +486,27 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
 
 
-export default function KelolaKendaraan({role, data, setData}) {
+export default function KelolaKendaraan({role}) {
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState([])
+
+  useEffect(()=>{
+    (async function(){
+      setLoading(true)
+
+      await fetchDataKendaraan(role.current).then(data=>{
+        if(data.length)setData(data)
+      })
+      setLoading(false)
+    })()
+  },[])
 
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">
+      {loading ? <>Loading ....</> : 
         <ListData role={role} data={data} setData={setData}/>
+      }
+      
     </div>
   )
 }

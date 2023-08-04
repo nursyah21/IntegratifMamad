@@ -10,6 +10,7 @@ import { SelectRole } from '../Register';
 import { fetchData, fetchDataKendaraanId, fetchDataPenyewaId, fetchDataTransaksiId, fetchDataUser } from '../../components/fetchApi';
 import { RollerShadesClosedSharp } from '@mui/icons-material';
 import { fetchDataKendaraan, fetchDataPenyewa, fetchDataTransaksi } from '../Dashboard';
+import Loading from '../../components/Loading';
 
 
 const schema = Yup.object({
@@ -53,8 +54,8 @@ const CreateNew = ({token, setData, setIsOpen}) => {
         throw 'id pegawai not found'
       }
 
-
-      await fetch(baseURL+'/transaksi/create', {
+      
+      await fetch(baseURL+'/transaksi/baru', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -81,6 +82,7 @@ const CreateNew = ({token, setData, setIsOpen}) => {
       validationSchema={schema}
       onSubmit={(values) => handle(values)}
     >
+      
       <Form>
         <div className='mb-4'>
           <label className="text-gray-700 dark:text-gray-200" htmlFor="idKendaraan">ID kendarran</label>
@@ -130,6 +132,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
   const [dialogProps, setDialogProps] = useState({title:'', id:''})
   const searchValue = useRef()
   const [errorSearch, setErrorSearch] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const Tooltip = (id) => (<Popover className="relative">
     <Popover.Button className={'border px-2 rounded-md bg-gray-200 border-gray-200 font-bold hover:bg-gray-100'}>:</Popover.Button>
@@ -274,7 +277,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
       onSubmit={(values) => {
         (async function(){
             try{
-                await fetch(baseURL+ '/penyewa/create', {
+                await fetch(baseURL+ '/penyewa/baru', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
@@ -434,15 +437,16 @@ function ListData({token = AUTH, role='', data=[], setData}){
               <tr className='text-left'>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NO.</th>
                 {/* <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">ID</th> */}
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Id Pegawai</th>
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Id Kendaraan</th>
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Versi Kendaraan</th>
+                {/* <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Harga Sewa</th> */}
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Merk Kendaraan</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Tipe Kendaraan</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Plat Nomor</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Tanggal Sewa</th>
                 {/* {role === 'ADMIN' ?
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Role</th> : null
                 } */}
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Tanggal Kembali</th>
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Id Penyewa</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Nama Penyewa</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">harga Sewa</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Total Harga Sewa</th>
               </tr>
@@ -458,10 +462,10 @@ function ListData({token = AUTH, role='', data=[], setData}){
                       {e.id}
                     </td> */}
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.idPegawai}
+                      {e.kendaraan.merkKendaraan}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.idKendaraan}
+                      {e.kendaraan.tipeKendaraan}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.versiKendaraan}
@@ -473,7 +477,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                       {e.tanggalKembali}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.idPenyewa}
+                      {e.penyewa.namaPenyewa}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.hargaSewa}
@@ -505,13 +509,28 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
 
 
-export default function KelolaTransaksi({token, role, data, setData}) {
-  // useEffect(()=>{
-  //   console.log(data)
-  // },[])
+export default function KelolaTransaksi({token, role}) {
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState([])
+  useEffect(()=>{
+    (async function(){
+      setLoading(true)
+        try{
+          await fetchDataTransaksi(role.current).then(data=>{
+            if(data.length)setData(data)
+          })
+        }catch(e){
+          console.log(e)        
+        }
+      setLoading(false)
+    })()
+}, [])
+  
   return (
     <div className="sm:flex sm:justify-between sm:items-center mb-8">
+        {loading ? <>Loading ....</> : 
         <ListData token={token} role={role} data={data} setData={setData}/>
+      }
     </div>
   )
 }
