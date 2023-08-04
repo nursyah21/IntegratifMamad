@@ -24,9 +24,11 @@ const CreateNew = ({setData, setIsOpen}) => {
   const [role, setRole] = useState('ADMIN')
   const [hidden, setHidden] = useState(true)
   const [wrong, setWrong] = useState(false)
+  const [loading, setLoading] = useState(false)
   
   const handle = async (values) => {
     try{
+      setLoading(true)
       await fetch(baseURL+'/penyewa/create', {
         method: 'POST',
         headers: {
@@ -39,56 +41,51 @@ const CreateNew = ({setData, setIsOpen}) => {
         setData(data)
         setIsOpen(false)
       })
-
     }catch(e){
       console.log(e)
     }
+    setLoading(false)
   }
   
   return <>
-  {/* {
-    "namaPenyewa": "Jo",
-    "nikpenyewa": "12345675",
-    "noTlpnPenyewa": "081234567555",
-    "alamatPenyewa": "Jl. Contoh Alamat No. 123"
-} */}
+    {loading ? <>Submit data....</> :
+      <Formik
+        initialValues={{
+          namaPenyewa: '',nikpenyewa: '',noTlpnPenyewa: '',alamatPenyewa: ''
+        }}
+        validationSchema={schema}
+        onSubmit={(values) => handle(values)}
+      >
+        <Form>
+          <div className='mb-4'>
+            <label className="text-gray-700 dark:text-gray-200" htmlFor="namaPenyewa">Nama Penyewa</label>
+            <Field name="namaPenyewa" type="text" className={inputClass} placeholder=''/>
+            <ErrorMessage name="namaPenyewa" component="div" />
+          </div>
 
-    <Formik
-      initialValues={{
-        namaPenyewa: '',nikpenyewa: '',noTlpnPenyewa: '',alamatPenyewa: ''
-      }}
-      validationSchema={schema}
-      onSubmit={(values) => handle(values)}
-    >
-      <Form>
-        <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="namaPenyewa">Nama Penyewa</label>
-          <Field name="namaPenyewa" type="text" className={inputClass} placeholder=''/>
-          <ErrorMessage name="namaPenyewa" component="div" />
-        </div>
+          <div className='mb-4'>
+            <label className="text-gray-700 dark:text-gray-200" htmlFor="tipeKendaraan">Nik Penyewa</label>
+            <Field name="nikpenyewa" type="text" className={inputClass} placeholder=''/>
+            <ErrorMessage name="nikpenyewa" component="div" />
+          </div>
 
-        <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="tipeKendaraan">Nik Penyewa</label>
-          <Field name="nikpenyewa" type="text" className={inputClass} placeholder=''/>
-          <ErrorMessage name="nikpenyewa" component="div" />
-        </div>
+          <div className='mb-4'>
+            <label className="text-gray-700 dark:text-gray-200" htmlFor="jenisKendaraan">No telp</label>
+            <Field name="noTlpnPenyewa" type="text" className={inputClass} placeholder='' />
+            <ErrorMessage name="noTlpnPenyewa" component="div" />
+          </div>
 
-        <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="jenisKendaraan">No telp</label>
-          <Field name="noTlpnPenyewa" type="text" className={inputClass} placeholder='' />
-          <ErrorMessage name="noTlpnPenyewa" component="div" />
-        </div>
+          <div className='mb-4'>
+            <label className="text-gray-700 dark:text-gray-200" htmlFor="alamatPenyewa">Alamat Penyewa</label>
+            <Field name="alamatPenyewa" type="text" className={inputClass} placeholder='' />
+            <ErrorMessage name="alamatPenyewa" component="div" />
+          </div>
+          
+          <button type="submit" className={buttonClass} style={{width: '100%'}}>Submit</button>
 
-        <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="alamatPenyewa">Alamat Penyewa</label>
-          <Field name="alamatPenyewa" type="text" className={inputClass} placeholder='' />
-          <ErrorMessage name="alamatPenyewa" component="div" />
-        </div>
-        
-        <button type="submit" className={buttonClass} style={{width: '100%'}}>Submit</button>
-
-      </Form>
-    </Formik>
+        </Form>
+      </Formik>
+    }
   </>
 }
   
@@ -97,6 +94,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
   const [dialogProps, setDialogProps] = useState({title:'', id:''})
   const searchValue = useRef()
   const [errorSearch, setErrorSearch] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const Tooltip = (id) => (<Popover className="relative">
     <Popover.Button className={'border px-2 rounded-md bg-gray-200 border-gray-200 font-bold hover:bg-gray-100'}>:</Popover.Button>
@@ -332,35 +330,39 @@ function ListData({token = AUTH, role='', data=[], setData}){
   // ---------------------------------------------------------------
 
   const handleSearch = (event) => {
-    if (event.key === "Enter") {
-      const val = searchValue.current.value
-      setErrorSearch('')
-      if(isNaN(val)){
-        setErrorSearch("you must enter only number")
-        return
-      }
-      if(val === '') {
-        fetchDataPenyewa(role).then(data=>{
-          if(data.error){
-            setData([])
-          }else{
-            setData(data)
-          }
+    (async function(){
+      setLoading(true)
+      if (event.key === "Enter") {
+        const val = searchValue.current.value
+        setErrorSearch('')
+        if(isNaN(val)){
+          setErrorSearch("you must enter only number")
+          return
         }
-        )
-      }else{
-        fetchDataPenyewaId(val)
-        .then(data=>{
-          if(data.status){
-            throw ''
+        if(val === '') {
+          await fetchDataPenyewa(role).then(data=>{
+            if(data.error){
+              setData([])
+            }else{
+              setData(data)
+            }
           }
-          const temp = []
-          temp.push(data)
-          setData(temp)
-        })
-        .catch(_=>setErrorSearch(`id: ${val} not found`))
+          )
+        }else{
+          await fetchDataPenyewaId(val)
+          .then(data=>{
+            if(data.status){
+              throw ''
+            }
+            const temp = []
+            temp.push(data)
+            setData(temp)
+          })
+          .catch(_=>setErrorSearch(`id: ${val} not found`))
+        }
       }
-    }
+      setLoading(false)
+    })()
   }
 
   // -------------------------------------------------------------
@@ -395,6 +397,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
     {/* table */}
     <div className='flex flex-col my-4 overflow-scroll'>
+      {loading ? <>Please wait...</> : <></>}
       <div className="overflow-x border border-gray-200 dark:border-gray-700 md:rounded-lg">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 mb-16">
             <thead className="bg-gray-50 dark:bg-gray-800">

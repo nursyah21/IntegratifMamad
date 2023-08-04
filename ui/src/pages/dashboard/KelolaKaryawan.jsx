@@ -22,6 +22,7 @@ const schema = Yup.object({
     const [role, setRole] = useState('ADMIN')
     const [hidden, setHidden] = useState(true)
     const [wrong, setWrong] = useState(false)
+    const [loading, setLoading] = useState(false)
   
     const schemaRegister = Yup.object({
       username: Yup.string().min(5),
@@ -36,6 +37,7 @@ const schema = Yup.object({
     const handleNewKaryawan = async (values) => {
       let token = JSON.parse(localStorage.getItem('token'));
       try{
+        setLoading(true)
         values.roleKaryawan = role
         await fetch(createKaryawanUrl, {
           method: 'POST',
@@ -52,9 +54,11 @@ const schema = Yup.object({
       }catch(e){
         console.log(e)
       }
+      setLoading(false)
     }
   
     return <>
+      {loading ? <>Submit data....</> :
       <Formik
         initialValues={{
           username: '', password: '', namaKaryawan: '', nikKaryawan: '', telpKaryawan: '', alamatKaryawan: '', roleKaryawan: role
@@ -123,6 +127,7 @@ const schema = Yup.object({
   
         </Form>
       </Formik>
+      }
     </>
   }
   
@@ -131,6 +136,7 @@ const schema = Yup.object({
     const [dialogProps, setDialogProps] = useState({title:'', id:''})
     const searchValue = useRef()
     const [errorSearch, setErrorSearch] = useState('')
+    const [loading, setLoading] = useState(false)
   
     const Tooltip = (id) => (<Popover className="relative">
       <Popover.Button className={'border px-2 rounded-md bg-gray-200 border-gray-200 font-bold hover:bg-gray-100'}>:</Popover.Button>
@@ -300,6 +306,8 @@ const schema = Yup.object({
     // ---------------------------------------------------------------
   
     const handleSearch = (event) => {
+      (async function(){
+        setLoading(true)
       if (event.key === "Enter") {
         const val = searchValue.current.value
         setErrorSearch('')
@@ -308,9 +316,9 @@ const schema = Yup.object({
           return
         }
         if(val === '') {
-          fetchData(token.accessToken).then(data=>setData(data))
+        await  fetchData(token.accessToken).then(data=>setData(data))
         }else{
-          fetchDataUser(token.accessToken, val)
+          await fetchDataUser(token.accessToken, val)
           .then(data=>{
             const temp = []
             temp.push(data)
@@ -318,7 +326,9 @@ const schema = Yup.object({
           })
           .catch(_=>setErrorSearch(`id: ${val} not found`))
         }
+        setLoading(false)
       }
+    })()
     }
   
     // -------------------------------------------------------------
@@ -353,6 +363,7 @@ const schema = Yup.object({
   
       {/* table */}
       <div className='flex flex-col my-4 overflow-scroll'>
+        {loading ? <>Please wait...</> : <></>}
         <div className="overflow-x border border-gray-200 dark:border-gray-700 md:rounded-lg">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 mb-16">
               <thead className="bg-gray-50 dark:bg-gray-800">
