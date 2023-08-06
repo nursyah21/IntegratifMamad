@@ -8,12 +8,12 @@ app.use(bodyParser.json())
 
 
 // const LOGINREGIS = 'http://localhost:6969'
-// const AKBAR = 'http://localhost:8081'
-// const YURIDAN = 'http://localhost:9001'
+const AKBAR = 'http://localhost:8081'
+const YURIDAN = 'http://localhost:9001'
 
 const LOGINREGIS = 'http://localhost:6969'
-const AKBAR = 'http://akbar.serveo.net'
-const YURIDAN = 'http://yuridan.serveo.net'
+// const AKBAR = 'http://akbar.serveo.net'
+// const YURIDAN = 'http://yuridan.serveo.net'
 
 app.post('/registration', async (req, res)=> {
     var data = await fetch(LOGINREGIS + req.path, {
@@ -162,6 +162,40 @@ app.post('/transaksi/baru', async (req,res) => {
     try{
         var data = await fetch(AKBAR + req.path, {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(req.body)
+        }).then(data => data.text())
+        console.log(data)
+        return res.json(data)
+    }catch(e){
+        console.log(e)
+        return res.json({status:'error'})
+    }
+});
+
+app.post('/transaksi/id::id/edit-status', async (req,res) => {
+    try{
+        var data = await fetch(AKBAR + req.path, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(req.body)
+        }).then(data => data.text())
+        console.log(data)
+        return res.json(data)
+    }catch(e){
+        console.log(e)
+        return res.json({status:'error'})
+    }
+});
+
+app.post('/transaksi/id::id/edit-pengembalian', async (req,res) => {
+    try{
+        var data = await fetch(AKBAR + req.path, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },

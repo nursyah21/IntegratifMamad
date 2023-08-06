@@ -35,7 +35,10 @@ public class TransaksiServiceImpl implements TransaksiService {
     // private static String serverPegawai = "localhost";
     // private static String serverPenyewa = "localhost";
     // private static String serverPegawai = "localhost";
-    private static String yuridan = "yuridan.serveo.net";
+    private static String yuridan = "localhost:9001";
+    
+    // private static String yuridan = "yuridan.serveo.net";
+    
     private static String portKendaraan = "9001";
     private static String portPenyewa = "9001";
     private static String portPegawai = "6969";
@@ -187,11 +190,10 @@ public class TransaksiServiceImpl implements TransaksiService {
             throw new EntityNotFoundException("idTransaksi " + idTransaksi + " tidak ditemukan.");
         }
     }
-
+//    private static  final Logger logger = LoggerFactory.getLogger(TransaksiServiceImpl.class);
     @Override
     public void editStatusSewa(Long idTransaksi, String newStatusSewa) {
         Optional<TransaksiEntity> transaksiOptional = transaksiRepository.findById(idTransaksi);
-
         if (transaksiOptional.isPresent()) {
             TransaksiEntity transaksiEntity = transaksiOptional.get();
 
@@ -201,7 +203,9 @@ public class TransaksiServiceImpl implements TransaksiService {
                 PengembalianEntity pengembalianEntity = pengembalianOptional.get();
                 String currentStatusSewa = pengembalianEntity.getStatusSewa();
 
-                if (!currentStatusSewa.equals(newStatusSewa)) {
+                logger.info("transkasi impl-> " + newStatusSewa);
+                logger.info("transkasi impl-> " + currentStatusSewa);
+                if (currentStatusSewa == null || !currentStatusSewa.equals(newStatusSewa)) {
                     // Ubah statusSewa pada pengembalianEntity
                     pengembalianEntity.setStatusSewa(newStatusSewa);
 

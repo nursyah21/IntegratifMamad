@@ -2,6 +2,8 @@ package com.transaksi.Akbar.controller;
 
 import com.transaksi.Akbar.DTO.TransaksiDTO;
 import com.transaksi.Akbar.service.TransaksiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +28,19 @@ public class TransaksiController {
         transaksiService.createTransaksi(transaksiDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+    private static  final Logger logger = LoggerFactory.getLogger(TransaksiController.class);
     @PutMapping("/id:{idTransaksi}/edit-status")
     public void editStatusSewa(
             @PathVariable Long idTransaksi,
             @RequestBody Map<String, Object> StatusSewaData
     ) {
-        String newStatusSewa = (String) StatusSewaData.get("statusSewa");
-        transaksiService.editStatusSewa(idTransaksi, newStatusSewa);
+        try{
+            String newStatusSewa = (String) StatusSewaData.get("statusSewa");
+            logger.info(newStatusSewa);
+            transaksiService.editStatusSewa(idTransaksi, newStatusSewa);
+        }catch (Exception e){
+            logger.info(e.getMessage());
+        }
     }
     @PutMapping("/id:{idTransaksi}/edit-pengembalian")
     public void editPengembalian(

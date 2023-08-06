@@ -137,25 +137,25 @@ function ListData({token = AUTH, role='', data=[], setData}){
   const Tooltip = (id) => (<Popover className="relative">
     <Popover.Button className={'border px-2 rounded-md bg-gray-200 border-gray-200 font-bold hover:bg-gray-100'}>:</Popover.Button>
 
-    <Popover.Panel className="absolute z-10 bg-white -ml-24 ">
+    <Popover.Panel className="absolute z-10 bg-white -ml-40 ">
       <div className="flex flex-col border border-gray-200 rounded-xl">
         <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
-            setDialogProps({title:'Edit', id:id})
+            setDialogProps({title:'detail pengembalian', id:id})
           }}>
-            <i className="fa fa-pencil mx-2" aria-hidden="true" />Edit
+            <i className="fa fa-pencil mx-2" aria-hidden="true" />detail pengembalian
           </button>
         </div>
         <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
-            setDialogProps({title:'Ubah Status', id:id})
+            setDialogProps({title:'ubah status', id:id})
           }}>
             <i className="fa fa-pencil mx-2" aria-hidden="true" />Ubah Status
           </button>
         </div>
-        <div className='hover:bg-gray-200 p-2'>
+        {/* <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
             setDialogProps({title:'Delete', id:id})
@@ -164,7 +164,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
             Delete
           </button>
           
-        </div>
+        </div> */}
       </div>
     </Popover.Panel>
   </Popover>)
@@ -198,25 +198,34 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
     const UbahStatus = () => {
       const [status, setStatus] = useState(null)
-      const [selected, setSelected] = useState('')
+      const [selected, setSelected] = useState('sedang proses')
 
 
       useEffect(()=>{
         (async function(){
-          await fetchDataPenyewaId(props.id.id)
-            .then(data=>{
-              setStatus(data)
-            })
+          console.log('fetch data')
+          console.log(props.id.id)
+          try{
+            await fetchDataTransaksiId(props.id.id)
+              .then(data=>{
+                if(data.status)throw ''
+                  setStatus(data.pengembalian)
+                  // setSelected(data?.pengembalian?.status ?? 'sedang proses')
+              })
+          }catch(e){
+            console.log(e)
+          }
+          console.log('finish fetch data')
         })()
       }, [])
       return <> {status ? <>
         <div>
           <Listbox value={selected} onChange={setSelected}>
             <Listbox.Button className={inputClass}>
-              {selected ? 'sedang disewa' : 'tidak sedang disewa'}
+              {selected}
             </Listbox.Button>
             <Listbox.Options className={'outline-none'}>
-              {[true, false].map((i, idx)=> (
+              {['selesai', 'sedang diproses'].map((i, idx)=> (
                 <Listbox.Option
                 key={idx}
                 value={i}
@@ -224,7 +233,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                   `relative cursor-default select-none p-2 outline-none ${
                     active ? 'bg-gray-200' : ''
                   }`}
-                >{i ? 'sedang disewa' : 'tidak sedang disewa'}</Listbox.Option>
+                >{i}</Listbox.Option>
               ))}
             </Listbox.Options>
           </Listbox>
@@ -233,19 +242,26 @@ function ListData({token = AUTH, role='', data=[], setData}){
         <div className='flex mt-4 justify-center'>
           <button onClick={()=>{
               (async function(){
-                const link = baseURL + '/penyewa/sedang-sewa/' + props.id.id +'/' +(selected?'true':'false')
+                // const link = baseURL + '/penyewa/sedang-sewa/' + props.id.id +'/' +(selected?'true':'false')
                 try{
-                  await fetch(link ,{
-                    method:'GET'
-                  })
-                  await fetchDataPenyewa(role.current).then(data=>{
+                  console.log('submit data')
+                  await fetch(
+                    baseURL + '/transaksi/id:'+props.id.id+'/edit-status',{
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({"statusSewa":selected})
+                    }
+                  )
+                  await fetchDataTransaksi(role.current).then(data=>{
                     setData(data)
                     setIsOpen(false)
                   })
+                  console.log('finish submit')
                 }catch(e){
                   console.log(e)
                 }
-
               })()
             }} className={buttonClass}>
             Submit
@@ -348,15 +364,16 @@ function ListData({token = AUTH, role='', data=[], setData}){
               <div className='my-4'>
               {props.title === 'create new transaksi'
                 ? <CreateNew token={token.accessToken} setData={setData} setIsOpen={setIsOpen} /> 
-                : props.title === 'Delete' 
-                ? <> Are you sure to delete 
-                    <div className='gap-x-4 flex mt-2'>
-                      <button className={`${buttonClass} !bg-red-600 hover:!bg-red-800`} onClick={() => deleteUser()}>Delete</button>
-                      <button className={[buttonClass]} onClick={() => setIsOpen(false)}>Cancel</button>
-                    </div>
-                  </> 
-                : props.title === 'Edit' ? <EditDialog /> 
-                : <UbahStatus />
+                : props.title === 'ubah status' 
+                ? <UbahStatus />
+                : props.title === 'detail pengembalian' ? <EditDialog /> 
+                : <></> 
+                // <> Are you sure to delete 
+                //     <div className='gap-x-4 flex mt-2'>
+                //       <button className={`${buttonClass} !bg-red-600 hover:!bg-red-800`} onClick={() => deleteUser()}>Delete</button>
+                //       <button className={[buttonClass]} onClick={() => setIsOpen(false)}>Cancel</button>
+                //     </div>
+                //   </> 
                 }
               </div>
           </Dialog.Panel>
@@ -448,6 +465,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Tanggal Kembali</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Nama Penyewa</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">harga Sewa</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Tambah hari</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Total Harga Sewa</th>
               </tr>
             </thead>
@@ -482,8 +500,16 @@ function ListData({token = AUTH, role='', data=[], setData}){
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.hargaSewa}
                     </td>
-                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.totalHargaSewa}
+                    <td>
+                      {e.pengembalian.tambahanHari}
+                    </td>
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-center items-center gap-x-2'>
+                      <div>
+                        { e.pengembalian.tambahanHari ? e.pengembalian.totalBayar : e.totalHargaSewa}
+                      </div>
+                      <div>
+                        {role === 'ADMIN' ? <Tooltip id={e.idTransaksi} key={idx} /> : null}
+                      </div>
                     </td>
 {/* 
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
@@ -492,7 +518,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center'>
                       {e.statusSedangSewa ? 'disewa' : 'tidak disewa'}
-                      {role === 'ADMIN' ? <Tooltip id={e.idPenyewa} key={idx} /> : null}
+                      
                     </td>
                    */}
                     </tr>
