@@ -11,6 +11,7 @@ import { fetchData, fetchDataKendaraanId, fetchDataPenyewaId, fetchDataTransaksi
 import { RollerShadesClosedSharp } from '@mui/icons-material';
 import { fetchDataKendaraan, fetchDataPenyewa, fetchDataTransaksi } from '../Dashboard';
 import Loading from '../../components/Loading';
+import moment from 'moment';
 
 
 const schema = Yup.object({
@@ -274,67 +275,72 @@ function ListData({token = AUTH, role='', data=[], setData}){
     const EditDialog = () => {
       const [dataEdit, setDataEdit] = useState(null)
 
+      const handle = async (values)  => {
+        try{
+          console.log('submit data: '+ JSON.stringify(values.tambahanHari))
+          await fetch(baseURL+ '/transaksi/id:'+props.id.id+'/edit-pengembalian', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                "notePengembalian" : values.notePengembalian,
+                "tambahanHari": parseInt(values.tambahanHari)
+              })
+          })
+
+          await fetchDataTransaksi(role.current).then(data=>{
+            setData(data)
+            setIsOpen(false)
+          })
+          console.log('finish submit')
+        }catch(e){
+          console.log(e)
+        }
+      }
+
       useEffect(()=>{
         (async function(){
-          fetchDataPenyewaId(props.id.id)
+          console.log(props.id.id)
+          if(dataEdit)return
+          fetchDataTransaksiId(props.id.id)
             .then(data=>{
-              setDataEdit(data)
-              console.log(data)
+              // console.log(data)
+              if(data.status){
+                throw ''
+              }
+              setDataEdit(data.pengembalian)
+              console.log(data.pengembalian)
+              
             })
         })()
-      },[])
+      }, [])
       
       return <> {dataEdit ? 
           <Formik
       initialValues={{
-        namaPenyewa: dataEdit.namaPenyewa, nikpenyewa: dataEdit.nikpenyewa, noTlpnPenyewa: dataEdit.noTlpnPenyewa,alamatPenyewa: dataEdit.alamatPenyewa
+        notePengembalian : dataEdit.notePengembalian,tambahanHari: dataEdit.tambahanHari
       }}
-      validationSchema={schema}
+      validationSchema={Yup.object({
+          notePengembalian: Yup.string().required().min(3),
+          tambahanHari: Yup.number().required()
+        })
+      }
       onSubmit={(values) => {
-        (async function(){
-            try{
-                await fetch(baseURL+ '/penyewa/baru', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify(values)
-                }) .then(data => data.text())
-
-                await fetchDataPenyewa(role.current).then(data=>{
-                  setData(data)
-                  setIsOpen(false)
-                })
-              }catch(e){
-              console.log(e)
-            }}
-        )()
-              
+        handle(values)
       }}
     >
       <Form>
         <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="namaPenyewa">Nama Penyewa</label>
-          <Field name="namaPenyewa" type="text" className={inputClass} placeholder=''/>
-          <ErrorMessage name="namaPenyewa" component="div" />
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="notePengembalian">Note Pengembalian</label>
+          <Field name="notePengembalian" type="text" className={inputClass} placeholder=''/>
+          <ErrorMessage name="notePengembalian" component="div" />
         </div>
 
         <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="nikpenyewa">NIK Penyewa</label>
-          <Field name="nikpenyewa" type="text" className={inputClass} placeholder=''/>
-          <ErrorMessage name="nikpenyewa" component="div" />
-        </div>
-
-        <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="noTelpnPenyewa">No Telepon</label>
-          <Field name="noTlpnPenyewa" type="text" className={inputClass} placeholder='' />
-          <ErrorMessage name="noTlpnPenyewa" component="div" />
-        </div>
-
-        <div className='mb-4'>
-          <label className="text-gray-700 dark:text-gray-200" htmlFor="alamatPenyewa">Alamat Penyewa</label>
-          <Field name="alamatPenyewa" type="text" className={inputClass} placeholder='' />
-          <ErrorMessage name="alamatPenyewa" component="div" />
+          <label className="text-gray-700 dark:text-gray-200" htmlFor="tambahanHari">Tambahan Hari</label>
+          <Field name="tambahanHari" type="text" className={inputClass} placeholder=''/>
+          <ErrorMessage name="tambahanHari" component="div" />
         </div>
 
        
@@ -489,10 +495,10 @@ function ListData({token = AUTH, role='', data=[], setData}){
                       {e.versiKendaraan}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.tanggalSewa}
+                      {moment(e.tanggalSewa).format("DD-MMM-YYYY")}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.tanggalKembali}
+                      {moment(e.tanggalKembali).format("DD-MMM-YYYY")}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.penyewa.namaPenyewa}
