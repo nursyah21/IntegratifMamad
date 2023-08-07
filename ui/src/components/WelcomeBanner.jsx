@@ -1,6 +1,9 @@
-import React, { Children } from 'react';
+import React, { Children, useEffect } from 'react';
 
 function WelcomeBanner({username="Acme Inc.", children, role=''}) {
+  
+  
+
   return (
     <div className="relative bg-indigo-200 dark:bg-indigo-500 p-4 sm:p-6 rounded-sm overflow-hidden mb-8">
       {/* Background illustration */}
@@ -50,7 +53,7 @@ function WelcomeBanner({username="Acme Inc.", children, role=''}) {
         <h1 className="text-2xl md:text-3xl text-slate-800 dark:text-slate-100 font-bold mb-1">
           Hi, {username} 👋 
         </h1>
-        <p className='text-sm font-light mx-2'>you're login as {role}</p>
+        <p className='text-sm font-light mx-2'>you're login as {role === 'ADMIN' ? 'ADMIN' : 'KASIR' }</p>
       </div>
 
       {children}
