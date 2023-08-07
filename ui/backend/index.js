@@ -7,13 +7,19 @@ app.use(cors());
 app.use(bodyParser.json())
 
 
-const LOGINREGIS = 'http://localhost:6969'
-const AKBAR = 'http://localhost:8081'
-const YURIDAN = 'http://localhost:9001'
+// const LOGINREGIS = 'http://localhost:6969'
+// const AKBAR = 'http://localhost:8081'
+// const YURIDAN = 'http://localhost:9001'
 
 // const LOGINREGIS = 'http://loginregis.serveo.net'
 // const AKBAR = 'http://akbar.serveo.net'
 // const YURIDAN = 'http://yuridan.serveo.net'
+
+const LOGINREGIS = 'https://loginregis-production.up.railway.app/'
+const AKBAR = 'https://akbar-production.up.railway.app/'
+const YURIDAN = 'https://yuridan-production.up.railway.app/'
+const CHARLIE = 'https://charlie-production-655b.up.railway.app/'
+
 
 app.post('/registration', async (req, res)=> {
     var data = await fetch(LOGINREGIS + req.path, {
@@ -212,7 +218,7 @@ app.post('/transaksi/id::id/edit-pengembalian', async (req,res) => {
 // -----------------------------------------------------------------
 
 app.post('/penyewa/create', async (req,res) => {
-    var data = await fetch(YURIDAN + req.path, {
+    var data = await fetch(CHARLIE + req.path, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -226,7 +232,7 @@ app.post('/penyewa/create', async (req,res) => {
 })
 
 app.get('/penyewa/super-all', async (req, res) => {
-    var data = await fetch(YURIDAN + req.path, {
+    var data = await fetch(CHARLIE + req.path, {
         method: 'GET',
     }).then(data => data.json())
     console.log(data)
@@ -234,7 +240,7 @@ app.get('/penyewa/super-all', async (req, res) => {
 })
 
 app.get('/penyewa/all', async (req, res) => {
-    var data = await fetch(YURIDAN + req.path, {
+    var data = await fetch(CHARLIE + req.path, {
         method: 'GET',
     }).then(data => data.json())
     console.log(data)
@@ -242,7 +248,7 @@ app.get('/penyewa/all', async (req, res) => {
 })
 
 app.get('/penyewa/sedang-sewa', async (req, res) => {
-    var data = await fetch(YURIDAN + req.path, {
+    var data = await fetch(CHARLIE + req.path, {
         method: 'GET',
     }).then(data => data.json())
     console.log(data)
@@ -250,7 +256,7 @@ app.get('/penyewa/sedang-sewa', async (req, res) => {
 })
 
 app.get('/penyewa/find/:id', async (req, res) => {
-    var data = await fetch(YURIDAN + req.path, {
+    var data = await fetch(CHARLIE + req.path, {
         method: 'GET',
     }).then(data => data.json())
     console.log(data)
@@ -259,7 +265,7 @@ app.get('/penyewa/find/:id', async (req, res) => {
 
 app.get('/penyewa/hapus/:id/:bool', async (req,res) => {
     try{        
-        var data = await fetch(YURIDAN + req.path, {
+        var data = await fetch(CHARLIE + req.path, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -274,7 +280,7 @@ app.get('/penyewa/hapus/:id/:bool', async (req,res) => {
 
 app.get('/penyewa/sedang-sewa/:id/:bool', async (req,res) => {
     try{
-        var data = await fetch(YURIDAN + req.path, {
+        var data = await fetch(CHARLIE + req.path, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -289,7 +295,7 @@ app.get('/penyewa/sedang-sewa/:id/:bool', async (req,res) => {
 
 app.get('/penyewa/hapus-permanen/:id', async (req,res) => {
     try{
-        var data = await fetch(YURIDAN + req.path, {
+        var data = await fetch(CHARLIE + req.path, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -302,6 +308,7 @@ app.get('/penyewa/hapus-permanen/:id', async (req,res) => {
     }
 });
 
+//---------------------------------------------------------------------------------------------------------------
 
 app.post('/kendaraan/create', async (req,res) => {
     try{
