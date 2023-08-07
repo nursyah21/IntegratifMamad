@@ -277,37 +277,37 @@ function ListData({token = AUTH, role='', data=[], setData}){
       <Form>
         <div className='mb-4'>
           <label className="text-gray-700 dark:text-gray-200" htmlFor="merKendaraan">Merk Kendaraan</label>
-          <Field name="merkKendaraan" type="text" className={inputClass} placeholder='Toyota'/>
+          <Field name="merkKendaraan" type="text" className={inputClass} placeholder='Merk'/>
           <ErrorMessage name="merkKendaraan" component="div" />
         </div>
 
         <div className='mb-4'>
           <label className="text-gray-700 dark:text-gray-200" htmlFor="tipeKendaraan">Tipe Kendaraan</label>
-          <Field name="tipeKendaraan" type="text" className={inputClass} placeholder='Avanza'/>
+          <Field name="tipeKendaraan" type="text" className={inputClass} placeholder='Tipe'/>
           <ErrorMessage name="tipeKendaraan" component="div" />
         </div>
 
         <div className='mb-4'>
           <label className="text-gray-700 dark:text-gray-200" htmlFor="jenisKendaraan">Jenis Kendaraan</label>
-          <Field name="jenisKendaraan" type="text" className={inputClass} placeholder='Mobil' />
+          <Field name="jenisKendaraan" type="text" className={inputClass} placeholder='Jenis' />
           <ErrorMessage name="jenisKendaraan" component="div" />
         </div>
 
         <div className='mb-4'>
           <label className="text-gray-700 dark:text-gray-200" htmlFor="tahunKeluaran">Tahun Kendaraan</label>
-          <Field name="tahunKeluaran" type="text" className={inputClass} placeholder='2017' />
+          <Field name="tahunKeluaran" type="text" className={inputClass} placeholder='Tahun' />
           <ErrorMessage name="tahunKeluaran" component="div" />
         </div>
 
         <div className='mb-4'>
           <label className="text-gray-700 dark:text-gray-200" htmlFor="kapasitasKursi">Kapasitas Kursi</label>
-          <Field name="kapasitasKursi" type="text" className={inputClass} placeholder='jl. ketintang '/>
+          <Field name="kapasitasKursi" type="text" className={inputClass} placeholder='0'/>
           <ErrorMessage name="kapasitasKursi" component="div" />
         </div>
 
         <div className='mb-4'>
           <label className="text-gray-700 dark:text-gray-200" htmlFor="hargaSewa">Harga Sewa</label>
-          <Field name="hargaSewa" type="text" className={inputClass} placeholder='15000 '/>
+          <Field name="hargaSewa" type="text" className={inputClass} placeholder='0'/>
           <ErrorMessage name="hargaSewa" component="div" />
         </div>
         
@@ -466,7 +466,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                     </td>
                     
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.statusHapus ? <>bisa</> : <>tidak bisa</>}
+                      {e.statusHapus ? <>terhapus</> : <>tersedia</>}
                     </td>
 
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center'>
