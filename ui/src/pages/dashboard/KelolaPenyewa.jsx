@@ -442,7 +442,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                     </td>
 
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center'>
-                      {e.statusSedangSewa ? 'disewa' : 'tidak disewa'}
+                      {e.statusSedangSewa ? 'sedang menyewa' : 'tidak sedang menyewa'}
                       {role === 'ADMIN' ? <Tooltip id={e.idPenyewa} key={idx} /> : null}
                     </td>
                   
