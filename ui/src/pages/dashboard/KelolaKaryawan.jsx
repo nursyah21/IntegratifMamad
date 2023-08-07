@@ -237,25 +237,25 @@ const schema = Yup.object({
               <Form>
                 <div className='mb-4'>
                   <label className="text-gray-700 dark:text-gray-200" htmlFor="namaKaryawan">Nama Karyawan</label>
-                  <Field name="namaKaryawan" type="text" className={inputClass} placeholder='supriyadi'/>
+                  <Field name="namaKaryawan" type="text" className={inputClass} placeholder='Nama'/>
                   <ErrorMessage name="namaKaryawan" component="div" />
                 </div>
   
                 <div className='mb-4'>
                   <label className="text-gray-700 dark:text-gray-200" htmlFor="nikKaryawan">Nik Karyawan</label>
-                  <Field name="nikKaryawan" type="text" className={inputClass} placeholder='64060211' />
+                  <Field name="nikKaryawan" type="text" className={inputClass} placeholder='NIK' />
                   <ErrorMessage name="nikKaryawan" component="div" />
                 </div>
   
                 <div className='mb-4'>
                   <label className="text-gray-700 dark:text-gray-200" htmlFor="telpKaryawan">Telp Karyawan</label>
-                  <Field name="telpKaryawan" type="text" className={inputClass} placeholder='62895295' />
+                  <Field name="telpKaryawan" type="text" className={inputClass} placeholder='Telpon' />
                   <ErrorMessage name="telpKaryawan" component="div" />
                 </div>
   
                 <div className='mb-4'>
                   <label className="text-gray-700 dark:text-gray-200" htmlFor="alamatKaryawan">Alamat Karyawan</label>
-                  <Field name="alamatKaryawan" type="text" className={inputClass} placeholder='jl. ketintang '/>
+                  <Field name="alamatKaryawan" type="text" className={inputClass} placeholder='Alamat'/>
                   <ErrorMessage name="alamatKaryawan" component="div" />
                 </div>
   
