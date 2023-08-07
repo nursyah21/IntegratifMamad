@@ -164,16 +164,10 @@ function Dashboard({token=AUTH }) {
       setUsername(token.username)
       // setLoading(true)
       await fetchData(token.accessToken).then(data=>{
-        // if(data.length)setDataKaryawan(data)
-        // console.log(role.current)
         role.current = data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
       }).catch(e=>{
         console.log(e)
-        // localStorage.clear()
-        // window.location.reload()
       })
-        // localStorage.clear() && window.location.reload())
-      // setLoading(false)
     })()
 
   }, [])

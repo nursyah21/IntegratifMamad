@@ -46,7 +46,7 @@ export const SelectRole = ({role, setRole}) =>  (<Listbox value={role} onChange=
         }`}
       >
         <p>
-          {i}
+          {i === 'ADMIN' ? 'ADMIN' : 'KASIR'}
         </p>
       </Listbox.Option>
     ))}

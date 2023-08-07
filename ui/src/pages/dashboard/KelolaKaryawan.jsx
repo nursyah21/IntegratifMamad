@@ -374,7 +374,11 @@ const schema = Yup.object({
                 <tr className='text-left'>
                   <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NO.</th>
                   {/* <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">ID</th> */}
-                  <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Username</th>
+                  {
+                    role === 'ADMIN' ?
+                    <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Username</th>
+                    : null
+                  }
                   <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Nama Karyawan</th>
                   <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NIK</th>
                   {role === 'ADMIN' ?
@@ -394,9 +398,12 @@ const schema = Yup.object({
                       {/* <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                         {e.id}
                       </td> */}
-                      <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                        {e.username}
-                      </td>
+                      {
+                        role === 'ADMIN' ? 
+                        <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
+                          {e.username}
+                        </td> : null
+                      }
                       <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                         {e.namaKaryawan}
                       </td>
