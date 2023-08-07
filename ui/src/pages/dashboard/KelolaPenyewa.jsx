@@ -109,21 +109,23 @@ function ListData({token = AUTH, role='', data=[], setData}){
             <i className="fa fa-pencil mx-2" aria-hidden="true" />Edit
           </button>
         </div>
-        <div className='hover:bg-gray-200 p-2'>
+        {/* <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
             setDialogProps({title:'Ubah Status', id:id})
           }}>
             <i className="fa fa-pencil mx-2" aria-hidden="true" />Ubah Status
           </button>
-        </div>
+        </div> */}
         <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
             setDialogProps({title:'Delete', id:id})
           }}>
             <i className='fa fa-trash mx-2' aria-hidden='true' />
-            Delete
+            {
+              role === 'ADMIN' ? <>Delete</> : <>Soft Delete</>
+            }
           </button>
           
         </div>
@@ -139,7 +141,9 @@ function ListData({token = AUTH, role='', data=[], setData}){
     
 
     const deleteUser = async () => {
-      await fetch(baseURL + '/penyewa/hapus-permanen/'+ props.id.id, {
+      const link = baseURL + 
+        (role == 'ADMIN '? '/penyewa/hapus-permanen/'+ props.id.id : '/penyewa/hapus/' + props.id.id + '/true')
+      await fetch(baseURL, {
         method: 'GET',
       })
       await fetchDataPenyewa(role.current).then(data=>{
@@ -310,8 +314,9 @@ function ListData({token = AUTH, role='', data=[], setData}){
               <div className='my-4'>
               {props.title === 'create new penyewa'
                 ? <CreateNew setData={setData} setIsOpen={setIsOpen} /> 
-                : props.title === 'Delete' 
-                ? <> Are you sure to delete 
+                : props.title ===  'Delete' 
+                ? <> Are you sure to {role === 'ADMIN' ? <>delete</> : <>soft delete</>} 
+                
                     <div className='gap-x-4 flex mt-2'>
                       <button className={`${buttonClass} !bg-red-600 hover:!bg-red-800`} onClick={() => deleteUser()}>Delete</button>
                       <button className={[buttonClass]} onClick={() => setIsOpen(false)}>Cancel</button>
@@ -403,7 +408,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
             <thead className="bg-gray-50 dark:bg-gray-800">
               <tr className='text-left'>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NO.</th>
-                {/* <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">ID</th> */}
+                <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">ID Penyewa</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Nama Penyewa</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NIK Penyewa</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Telp</th>
@@ -411,7 +416,11 @@ function ListData({token = AUTH, role='', data=[], setData}){
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Role</th> : null
                 } */}
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Alamat</th>
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Status Hapus</th>
+                {
+                  role === 'ADMIN' ?
+                  <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Status Hapus</th>
+                  : null
+                }
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Status Sedang Sewa</th>
               </tr>
             </thead>
@@ -422,9 +431,9 @@ function ListData({token = AUTH, role='', data=[], setData}){
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {idx+1}
                     </td>
-                    {/* <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.id}
-                    </td> */}
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
+                      {e.idPenyewa}
+                    </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.namaPenyewa}
                     </td>
@@ -437,13 +446,16 @@ function ListData({token = AUTH, role='', data=[], setData}){
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.alamatPenyewa}
                     </td>
-                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.statusHapus ? 'bisa' : 'tidak'}
-                    </td>
+                    {
+                      role === 'ADMIN' ?
+                      <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
+                        {e.statusHapus ? 'bisa' : 'tidak'}
+                      </td> : null
+                    }
 
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center'>
                       {e.statusSedangSewa ? 'sedang menyewa' : 'tidak sedang menyewa'}
-                      {role === 'ADMIN' ? <Tooltip id={e.idPenyewa} key={idx} /> : null}
+                      <Tooltip id={e.idPenyewa} key={idx} />
                     </td>
                   
                     </tr>

@@ -473,6 +473,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">harga Sewa</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Tambah hari</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Total Harga Sewa</th>
+                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Status Sewa</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y">
@@ -509,9 +510,12 @@ function ListData({token = AUTH, role='', data=[], setData}){
                     <td>
                       {e.pengembalian.tambahanHari}
                     </td>
-                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-center items-center gap-x-2'>
-                      <div>
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                         { e.pengembalian.tambahanHari ? e.pengembalian.totalBayar : e.totalHargaSewa}
+                    </td>
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center gap-x-2'>
+                      <div>
+                        { e.pengembalian.statusSewa}
                       </div>
                       <div>
                         {role === 'ADMIN' ? <Tooltip id={e.idTransaksi} key={idx} /> : null}

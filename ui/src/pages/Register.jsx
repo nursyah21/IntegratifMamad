@@ -30,7 +30,7 @@ export const SelectRole = ({role, setRole}) =>  (<Listbox value={role} onChange=
   <Listbox.Button className={inputClass}>
     <div className='flex justify-between items-center'>
       <p className='text-left'>
-        {role}
+        {role === 'ADMIN' ? 'ADMIN' : 'KASIR'}
       </p>
       <i className="fa fa-angle-down" aria-hidden="true" />
     </div>
