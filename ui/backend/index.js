@@ -15,10 +15,10 @@ app.use(bodyParser.json())
 // const AKBAR = 'http://akbar.serveo.net'
 // const YURIDAN = 'http://yuridan.serveo.net'
 
-const LOGINREGIS = 'https://loginregis-production.up.railway.app/'
-const AKBAR = 'https://akbar-production.up.railway.app/'
-const YURIDAN = 'https://yuridan-production.up.railway.app/'
-const CHARLIE = 'https://charlie-production-655b.up.railway.app/'
+const LOGINREGIS = 'https://loginregis-production.up.railway.app'
+const AKBAR = 'https://akbar-production.up.railway.app'
+const YURIDAN = 'https://yuridan-production.up.railway.app'
+const CHARLIE = 'https://charlie-production-655b.up.railway.app'
 
 
 app.post('/registration', async (req, res)=> {

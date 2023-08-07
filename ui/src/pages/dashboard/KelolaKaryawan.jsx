@@ -437,7 +437,7 @@ export default function KelolaKaryawan({token}) {
           if(
             // token.username === userData.username &&
             data.find(e=>e.username === token.username).roleKaryawan != 'ADMIN'){
-            window.location.reload()
+            // window.location.reload()
           }
           
         }).catch(e=>console.log(e))
