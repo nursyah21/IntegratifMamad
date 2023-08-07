@@ -83,7 +83,7 @@ export default function Login() {
               <button type="submit" className={buttonClass} style={{ width: '100%' }}>Submit</button>
 
               <div className='text-center mt-4'>
-                Didn't have an account? <a href="/register" className='hover:underline'>Register</a>
+                {/* Didn't have an account? <a href="/register" className='hover:underline'>Register</a> */}
               </div>
             </Form>
           </Formik>

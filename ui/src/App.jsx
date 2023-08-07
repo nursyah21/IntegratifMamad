@@ -30,7 +30,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={token ?<Dashboard token={token} /> : <Login />} />
         <Route exact path="/login" element={<Login />} />
-        <Route exact path="/register" element={<Register />} />
+        {/* <Route exact path="/register" element={<Register />} /> */}
       </Routes>
     </>
   );

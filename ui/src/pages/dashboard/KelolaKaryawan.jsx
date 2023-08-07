@@ -1,6 +1,6 @@
 import { useEffect, useState,useRef } from 'react';
 import { AUTH, USER } from '../../components/type';
-import { createKaryawanUrl, deleteUrl, karyawanAllUrl, karyawanIdUrl, updateUrl } from '../../components/url';
+import { createKaryawanUrl, deleteUrl, karyawanAllUrl, karyawanIdUrl, registerUrl, updateUrl } from '../../components/url';
 import { Popover, Dialog } from '@headlessui/react'
 import { buttonClass, inputClass } from '../../css/style';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
@@ -39,12 +39,13 @@ const schema = Yup.object({
       try{
         setLoading(true)
         values.roleKaryawan = role
-        await fetch(createKaryawanUrl, {
+        await fetch(registerUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({token:token.accessToken, data: values})
+          body: JSON.stringify(values)
+          // JSON.stringify({token:token.accessToken, data: values})
         }) .then(data => data.text()).catch(data => "")
         fetchData(token.accessToken).then(data=>{
           setData(data)
