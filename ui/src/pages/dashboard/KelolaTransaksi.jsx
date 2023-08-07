@@ -47,7 +47,7 @@ const CreateNew = ({token, setData, setIsOpen}) => {
 
       let pegawai
       try{
-        console.log(token)
+        // console.log(token)
         pegawai = await fetchDataUser(token, values.idPegawai)
       }catch(e){
         console.log(e)
@@ -78,7 +78,7 @@ const CreateNew = ({token, setData, setIsOpen}) => {
 
     <Formik
       initialValues={{
-        idKendaraan: null,tanggalSewa: null,tanggalKembali: null,idPenyewa: null, idPegawai: null
+        idKendaraan: '',tipeKendaraan: '',tanggalSewa: '',tanggalKembali: '',idPenyewa: '', idPegawai: ''
       }}
       validationSchema={schema}
       onSubmit={(values) => handle(values)}
@@ -93,8 +93,8 @@ const CreateNew = ({token, setData, setIsOpen}) => {
 
         <div className='mb-4'>
           <label className="text-gray-700 dark:text-gray-200" htmlFor="tipeKendaraan">Tipe Kendaraan</label>
-          <Field name="nikpenyewa" type="text" className={inputClass} placeholder=''/>
-          <ErrorMessage name="nikpenyewa" component="div" />
+          <Field name="tipeKendaraan" type="text" className={inputClass} placeholder=''/>
+          <ErrorMessage name="tipeKendaraan" component="div" />
         </div>
 
         <div className='mb-4'>

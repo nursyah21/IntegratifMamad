@@ -41,6 +41,7 @@ export default function Login() {
       setWrong(true)
       setLoading(false)
     }
+    console.log(localStorage.getItem('token'))
   }
 
   return (

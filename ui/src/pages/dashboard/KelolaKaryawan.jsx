@@ -168,7 +168,7 @@ const schema = Yup.object({
     // ------------------------------------------------------------------------------
   
     const MyDialog = ({props=dialogProps}) => {
-      const [userData, setUserData] = useState()
+      const [userData, setUserData] = useState(null)
       const [role, setRole] = useState('USER')
       useEffect(()=>{
         if(props.id.id){
@@ -433,12 +433,14 @@ export default function KelolaKaryawan({token}) {
       await fetchData(token.accessToken).then(data=>{
           if(data.length)setData(data)
           setRole(data.find(e=>e.username === token.username).roleKaryawan)
-          if(token.username === userData.username &&
+          if(
+            // token.username === userData.username &&
             data.find(e=>e.username === token.username).roleKaryawan != 'ADMIN'){
             window.location.reload()
           }
           
-        }).catch(e=>localStorage.clear() && window.location.reload())
+        }).catch(e=>console.log(e))
+        //.catch(e=>localStorage.clear() && window.location.reload())
       setLoading(false)
     })()
   },[])

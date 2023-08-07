@@ -7,13 +7,13 @@ app.use(cors());
 app.use(bodyParser.json())
 
 
-// const LOGINREGIS = 'http://localhost:6969'
-// const AKBAR = 'http://localhost:8081'
-// const YURIDAN = 'http://localhost:9001'
+const LOGINREGIS = 'http://localhost:6969'
+const AKBAR = 'http://localhost:8081'
+const YURIDAN = 'http://localhost:9001'
 
-const LOGINREGIS = 'http://loginregis.serveo.net'
-const AKBAR = 'http://akbar.serveo.net'
-const YURIDAN = 'http://yuridan.serveo.net'
+// const LOGINREGIS = 'http://loginregis.serveo.net'
+// const AKBAR = 'http://akbar.serveo.net'
+// const YURIDAN = 'http://yuridan.serveo.net'
 
 app.post('/registration', async (req, res)=> {
     var data = await fetch(LOGINREGIS + req.path, {
