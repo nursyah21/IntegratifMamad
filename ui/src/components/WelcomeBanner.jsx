@@ -58,7 +58,7 @@ function WelcomeBanner({username="Acme Inc.", children, role=''}) {
 
       {children}
     </div>
-  );
+  ); 
 }
 
 export default WelcomeBanner;
