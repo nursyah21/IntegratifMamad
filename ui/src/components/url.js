@@ -1,5 +1,5 @@
 // export const baseURL = 'http://localhost:5000'
-export const baseURL = 'https://backend.serveo.net'
+export const baseURL = 'https://spring-api-handler-production.up.railway.app'
 
 export const loginUrl = baseURL + '/login'
 export const karyawanAllUrl = baseURL + '/karyawan/all'
