@@ -482,7 +482,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
             <thead className="bg-gray-50 dark:bg-gray-800">
               <tr className='text-left'>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">NO.</th>
-                {/* <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">ID</th> */}
+                <th scope="col" className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">ID Kendaraan</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Merk</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Tipe Kendaraan</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Jenis Kendaraan</th>
@@ -492,7 +492,11 @@ function ListData({token = AUTH, role='', data=[], setData}){
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Tahun Keluaran</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Kursi</th>
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Harga sewa</th>
-                <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Status Hapus</th>
+                {
+                  role === 'ADMIN'?
+                  <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Status Hapus</th>
+                  : null
+                }
                 <th scope="col" className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Status Ketersediaan</th>
               </tr>
             </thead>
@@ -503,9 +507,9 @@ function ListData({token = AUTH, role='', data=[], setData}){
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {idx+1}
                     </td>
-                    {/* <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.id}
-                    </td> */}
+                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
+                      {e.idKendaraan}
+                    </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.merkKendaraan}
                     </td>
@@ -524,10 +528,12 @@ function ListData({token = AUTH, role='', data=[], setData}){
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e.hargaSewa}
                     </td>
-                    
-                    <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.statusHapus ? <>terhapus</> : <>belum dihapus</>}
-                    </td>
+                    {
+                      role === 'ADMIN' ?
+                      <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
+                        {e.statusHapus ? <>terhapus</> : <>belum dihapus</>}
+                      </td> : null
+                    }
 
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center'>
                       {e.statusKetersediaan ? <>tersedia</> : <>tidak tersedia</>}
