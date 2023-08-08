@@ -147,9 +147,11 @@ function ListData({token = AUTH, role='', data=[], setData}){
     const deleteUser = async () => {
       const link = baseURL + 
         (role == 'ADMIN '? '/penyewa/hapus-permanen/'+ props.id.id : '/penyewa/hapus/' + props.id.id + '/true')
+
       await fetch(baseURL, {
         method: 'GET',
       })
+
       await fetchDataPenyewa(role.current).then(data=>{
         setData(data)
         setIsOpen(false)
@@ -480,7 +482,7 @@ export default function KelolaPenyewa({role}) {
   const [data, setData] = useState([])
 
   useEffect(()=>{
-    console.log(role)
+    
     (async function(){
       setLoading(true)
       await fetchDataPenyewa(role.current).then(data=>{
