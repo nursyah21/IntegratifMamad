@@ -127,7 +127,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
             <i className="fa fa-pencil mx-2" aria-hidden="true" />Edit
           </button>
         </div>
-        
+
         {/* <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
@@ -370,6 +370,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
     if (event.key === "Enter") {
       const val = searchValue.current.value
       setErrorSearch('')
+      setErrorSearch2('')
       if(isNaN(val)){
         setErrorSearch("you must enter only number")
         return
