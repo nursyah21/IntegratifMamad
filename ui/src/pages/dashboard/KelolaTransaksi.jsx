@@ -72,7 +72,7 @@ const CreateNew = ({token, setData, setIsOpen}) => {
         ""
       })
       
-      await fetchDataTransaksi(role.current).then(data=>{
+      await fetchDataTransaksi(role).then(data=>{
         setData(data)
         setIsOpen(false)
       })
@@ -189,7 +189,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
       await fetch(baseURL + '/penyewa/hapus-permanen/'+ props.id.id, {
         method: 'GET',
       })
-      await fetchDataPenyewa(role.current).then(data=>{
+      await fetchDataPenyewa(role).then(data=>{
         setData(data)
         setIsOpen(false)
       })
@@ -263,7 +263,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                       body: JSON.stringify({"statusSewa":selected})
                     }
                   )
-                  await fetchDataTransaksi(role.current).then(data=>{
+                  await fetchDataTransaksi(role).then(data=>{
                     setData(data)
                     setIsOpen(false)
                   })
@@ -297,7 +297,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
               })
           })
 
-          await fetchDataTransaksi(role.current).then(data=>{
+          await fetchDataTransaksi(role).then(data=>{
             setData(data)
             setIsOpen(false)
           })
@@ -558,7 +558,7 @@ export default function KelolaTransaksi({token, role}) {
     (async function(){
       setLoading(true)
         try{
-          await fetchDataTransaksi(role.current).then(data=>{
+          await fetchDataTransaksi(role).then(data=>{
             console.log(data)
             if(data.length)setData(data)
           })

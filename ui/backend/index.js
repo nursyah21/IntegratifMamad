@@ -414,8 +414,12 @@ app.get('/kendaraan/hapus/:id/:bool', async (req,res) => {
             headers: {
                 'Content-Type': 'application/json',
             }
-        }) 
+        }).then(data => data.text())
+        .then(data=>
+            console.log(data)
+        )
         return res.json({})
+        // console.log('kendaraan')
     }catch(e){
         console.log(e)
         return res.json({error: e})

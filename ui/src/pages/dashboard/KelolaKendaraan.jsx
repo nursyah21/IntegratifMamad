@@ -38,7 +38,7 @@ const CreateNew = ({setData, setIsOpen}) => {
         body: JSON.stringify(values)
       }) .then(data => data.text()).catch(data => "")
       
-      await fetchDataKendaraan(role.current).then(data=>{
+      await fetchDataKendaraan(role).then(data=>{
         setData(data)
         setIsOpen(false)
       })
@@ -139,7 +139,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
         <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
-            setDialogProps({title:'Soft Delete', id:id})
+            setDialogProps({title: role === 'ADMIN' ? 'Delete' : 'Soft Delete', id:id})
           }}>
             <i className='fa fa-trash mx-2' aria-hidden='true' />
             {
@@ -164,11 +164,11 @@ function ListData({token = AUTH, role='', data=[], setData}){
       if(role != 'ADMIN') {
         url = '/kendaraan/hapus/'+props.id.id+'/true'
       }
-      
+      console.log(baseURL + url)
       await fetch(baseURL + url, {
         method: 'GET',
       })
-      await fetchDataKendaraan(role.current).then(data=>{
+      await fetchDataKendaraan(role).then(data=>{
         setData(data)
         setIsOpen(false)
       })
@@ -226,7 +226,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                   await fetch(link ,{
                     method:'GET'
                   })
-                  await fetchDataKendaraan(role.current).then(data=>{
+                  await fetchDataKendaraan(role).then(data=>{
                     setData(data)
                     setIsOpen(false)
                   })
@@ -273,7 +273,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                   body: JSON.stringify(values)
                 }) .then(data => data.text())
 
-                await fetchDataKendaraan(role.current).then(data=>{
+                await fetchDataKendaraan(role).then(data=>{
                   setData(data)
                   setIsOpen(false)
                 })

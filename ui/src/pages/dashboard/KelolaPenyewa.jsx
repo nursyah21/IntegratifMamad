@@ -37,7 +37,7 @@ const CreateNew = ({setData, setIsOpen}) => {
         body: JSON.stringify(values)
       }) .then(data => data.text()).catch(data => "")
 
-      await fetchDataPenyewa(role.current).then(data=>{
+      await fetchDataPenyewa(role).then(data=>{
         setData(data)
         setIsOpen(false)
       })
@@ -124,7 +124,8 @@ function ListData({token = AUTH, role='', data=[], setData}){
         <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
-            setDialogProps({title:'Soft Delete', id:id})
+            setDialogProps({title: role === 'ADMIN' ? 'Delete' : 'Soft Delete', 
+              id:id})
           }}>
             <i className='fa fa-trash mx-2' aria-hidden='true' />
             {
@@ -152,7 +153,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
         method: 'GET',
       })
 
-      await fetchDataPenyewa(role.current).then(data=>{
+      await fetchDataPenyewa(role).then(data=>{
         setData(data)
         setIsOpen(false)
       })
@@ -210,7 +211,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                   await fetch(link ,{
                     method:'GET'
                   })
-                  await fetchDataPenyewa(role.current).then(data=>{
+                  await fetchDataPenyewa(role).then(data=>{
                     setData(data)
                     setIsOpen(false)
                   })
@@ -257,7 +258,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
                   body: JSON.stringify(values)
                 }) .then(data => data.text())
 
-                await fetchDataPenyewa(role.current).then(data=>{
+                await fetchDataPenyewa(role).then(data=>{
                   setData(data)
                   setIsOpen(false)
                 })
@@ -485,7 +486,7 @@ export default function KelolaPenyewa({role}) {
     
     (async function(){
       setLoading(true)
-      await fetchDataPenyewa(role.current).then(data=>{
+      await fetchDataPenyewa(role).then(data=>{
         if(data.length)setData(data)
       })
       setLoading(false)

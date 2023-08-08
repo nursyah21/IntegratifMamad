@@ -1,5 +1,5 @@
 // export const baseURL = 'http://localhost:5000'
-export const baseURL = 'https://spring-api-handler-production.up.railway.app'
+export const baseURL = 'https://spring-api-handler.cyclic.app'
 export const YURIDAN = 'https://yuridan-production.up.railway.app'
 export const CHARLIE = 'https://charlie-production-655b.up.railway.app'
 
