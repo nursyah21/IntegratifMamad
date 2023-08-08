@@ -55,7 +55,7 @@ const CreateNew = ({token, setData, setIsOpen}) => {
         throw 'id pegawai not found'
       }
 
-      
+      console.log(values)
       await fetch(baseURL+'/transaksi/baru', {
         method: 'POST',
         headers: {
@@ -204,9 +204,9 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
       useEffect(()=>{
         (async function(){
-          console.log('fetch data')
-          console.log(props.id.id)
           try{
+            console.log('fetch data')
+            console.log(props.id.id)
             await fetchDataTransaksiId(props.id.id)
               .then(data=>{
                 if(data.status)throw ''
@@ -475,15 +475,15 @@ function ListData({token = AUTH, role='', data=[], setData}){
               </tr>
             </thead>
             <tbody className="bg-white divide-y">
-              { data.length && data[0]?.kendaraan && data[0]?.penyewa ?
+              { data.length ?
                 data.map((e,idx)=>{
-                    return <tr key={idx}>
+                    return !e.kendaraan ?
+                      <tr key={idx}></tr>
+                      :
+                    <tr key={idx}>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {idx+1}
                     </td>
-                    {/* <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.id}
-                    </td> */}
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {e?.kendaraan?.merkKendaraan}
                     </td>
@@ -551,6 +551,7 @@ export default function KelolaTransaksi({token, role}) {
       setLoading(true)
         try{
           await fetchDataTransaksi(role.current).then(data=>{
+            console.log(data)
             if(data.length)setData(data)
           })
         }catch(e){
