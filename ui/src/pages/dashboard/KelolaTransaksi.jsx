@@ -305,13 +305,11 @@ function ListData({token = AUTH, role='', data=[], setData}){
           if(dataEdit)return
           fetchDataTransaksiId(props.id.id)
             .then(data=>{
-              // console.log(data)
               if(data.status){
                 throw ''
               }
               setDataEdit(data.pengembalian)
               console.log(data.pengembalian)
-              
             })
         })()
       }, [])
@@ -477,7 +475,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
               </tr>
             </thead>
             <tbody className="bg-white divide-y">
-              { data ?
+              { data.length && data[0]?.kendaraan && data[0]?.penyewa ?
                 data.map((e,idx)=>{
                     return <tr key={idx}>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
@@ -487,13 +485,13 @@ function ListData({token = AUTH, role='', data=[], setData}){
                       {e.id}
                     </td> */}
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.kendaraan.merkKendaraan}
+                      {e?.kendaraan?.merkKendaraan}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.kendaraan.tipeKendaraan}
+                      {e?.kendaraan?.tipeKendaraan}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
-                      {e.versiKendaraan}
+                      {e?.versiKendaraan}
                     </td>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
                       {moment(e.tanggalSewa).format("DD-MMM-YYYY")}

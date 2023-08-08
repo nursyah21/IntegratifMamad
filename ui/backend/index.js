@@ -407,7 +407,7 @@ app.get('/kendaraan/status/:id/:bool', async (req,res) => {
     }
 });
 
-app.get('/kendaraan/hapus/:id', async (req,res) => {
+app.get('/kendaraan/hapus/:id/:bool', async (req,res) => {
     try{
         var data = await fetch(YURIDAN + req.path, {
             method: 'PUT',

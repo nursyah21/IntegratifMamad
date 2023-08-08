@@ -121,7 +121,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
         <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
-            setDialogProps({title:'Delete', id:id})
+            setDialogProps({title:'Soft Delete', id:id})
           }}>
             <i className='fa fa-trash mx-2' aria-hidden='true' />
             {
@@ -315,8 +315,8 @@ function ListData({token = AUTH, role='', data=[], setData}){
               <div className='my-4'>
               {props.title === 'create new penyewa'
                 ? <CreateNew setData={setData} setIsOpen={setIsOpen} /> 
-                : props.title ===  'Delete' 
-                ? <> Are you sure to {role === 'ADMIN' ? <>delete</> : <>soft delete</>} 
+                : props.title ===  'Delete'  || props.title ===  'Soft Delete'
+                ? <> Are you sure to delete
                 
                     <div className='gap-x-4 flex mt-2'>
                       <button className={`${buttonClass} !bg-red-600 hover:!bg-red-800`} onClick={() => deleteUser()}>Delete</button>

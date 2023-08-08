@@ -127,21 +127,23 @@ function ListData({token = AUTH, role='', data=[], setData}){
             <i className="fa fa-pencil mx-2" aria-hidden="true" />Edit
           </button>
         </div>
-        <div className='hover:bg-gray-200 p-2'>
+        {/* <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
             setDialogProps({title:'Ubah Status', id:id})
           }}>
             <i className="fa fa-pencil mx-2" aria-hidden="true" />Ubah Status
           </button>
-        </div>
+        </div> */}
         <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
-            setDialogProps({title:'Delete', id:id})
+            setDialogProps({title:'Soft Delete', id:id})
           }}>
             <i className='fa fa-trash mx-2' aria-hidden='true' />
-            Delete
+            {
+              role === 'ADMIN' ? <>Delete</> : <>Soft Delete</>
+            }
           </button>
           
         </div>
@@ -157,7 +159,12 @@ function ListData({token = AUTH, role='', data=[], setData}){
     
 
     const deleteUser = async () => {
-      await fetch(baseURL + '/kendaraan/hapus-permanen/'+ props.id.id, {
+      let url = '/kendaraan/hapus-permanen/'+ props.id.id
+      if(role != 'ADMIN') {
+        url = '/kendaraan/hapus/'+props.id.id+'/true'
+      }
+
+      await fetch(baseURL + url, {
         method: 'GET',
       })
       await fetchDataKendaraan(role.current).then(data=>{
@@ -339,7 +346,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
               <div className='my-4'>
               {props.title === 'create new vehicle'
                 ? <CreateNew setData={setData} setIsOpen={setIsOpen} /> 
-                : props.title === 'Delete' 
+                : props.title === 'Delete' || props.title === 'Soft Delete'
                 ? <> Are you sure to delete 
                     <div className='gap-x-4 flex mt-2'>
                       <button className={`${buttonClass} !bg-red-600 hover:!bg-red-800`} onClick={() => deleteUser()}>Delete</button>
@@ -449,17 +456,19 @@ function ListData({token = AUTH, role='', data=[], setData}){
         </div>
 
         {/* search2 */}
-        <div className='flex flex-col'>
-          <div className='relative flex items-center '>
-            <span className='absolute'>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 mx-3 text-gray-400 dark:text-gray-600">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
-              </svg>
-            </span>
-            <input ref={search2Value} className='block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg pl-11 md:w-80 focus:border-blue-300 focus:ring focus:outline-none' type="text" placeholder='search by version' onKeyDown={handleSearch2}/>
-          </div>
-          {errorSearch2 != '' ? <div className='mt-2 text-sm text-center'>{errorSearch2}</div> : null}
-        </div>
+        { role === 'ADMIN' ?
+          <div className='flex flex-col'>
+            <div className='relative flex items-center '>
+              <span className='absolute'>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 mx-3 text-gray-400 dark:text-gray-600">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+                </svg>
+              </span>
+              <input ref={search2Value} className='block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg pl-11 md:w-80 focus:border-blue-300 focus:ring focus:outline-none' type="text" placeholder='search by version' onKeyDown={handleSearch2}/>
+            </div>
+            {errorSearch2 != '' ? <div className='mt-2 text-sm text-center'>{errorSearch2}</div> : null}
+          </div> : null
+        }
       </div>
       
 
@@ -501,7 +510,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
               </tr>
             </thead>
             <tbody className="bg-white divide-y">
-              { data ?
+              { data.length ?
                 data.map((e,idx)=>{
                     return <tr key={idx}>
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap'>
@@ -537,7 +546,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
 
                     <td className='px-4 py-4 text-sm font-medium whitespace-nowrap flex justify-between items-center'>
                       {e.statusKetersediaan ? <>tersedia</> : <>tidak tersedia</>}
-                      {role === 'ADMIN' ? <Tooltip id={e.idKendaraan} key={idx} /> : null}
+                      <Tooltip id={e.idKendaraan} key={idx} />
                     </td>
                     </tr>
                 }) : null
