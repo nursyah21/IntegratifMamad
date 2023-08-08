@@ -570,8 +570,8 @@ export default function KelolaKendaraan({role}) {
   useEffect(()=>{
     (async function(){
       setLoading(true)
-
-      await fetchDataKendaraan(role.current).then(data=>{
+      // console.log(role.current)
+      await fetchDataKendaraan(role).then(data=>{
         if(data.length)setData(data)
       })
       setLoading(false)
