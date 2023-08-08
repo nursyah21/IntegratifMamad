@@ -49,7 +49,8 @@ export const fetchDataTransaksi = async (role) => {
 function Dashboard({token=AUTH }) {
   const [username, setUsername] = useState('')
   const [dataKaryawan, setDataKaryawan] = useState([])
-  const role = useRef('')
+  // const role = useRef('')
+  const [role, setRole] = useState('')
   const [kelolaKaryawanPage, setKelolaKaryawanPage] = useState(false)
   const [kelolaTransaksiPage, setKelolaTransaksiPage] = useState(false)
   const [kelolaPenyewaPage, setKelolaPenyewaPage] = useState(false)
@@ -164,7 +165,11 @@ function Dashboard({token=AUTH }) {
       setUsername(token.username)
       // setLoading(true)
       await fetchData(token.accessToken).then(data=>{
-        role.current = data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
+        console.log(data)
+        setRole(
+          data.find((e=USER)=>e.username === token.username).roleKaryawan  ?? ''
+        )
+        // role.current = 
       }).catch(e=>{
         console.log(e)
       })
@@ -183,7 +188,7 @@ function Dashboard({token=AUTH }) {
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
 
             {/* Welcome banner */}
-            <WelcomeBanner username={username} role={`${role.current}`}>
+            <WelcomeBanner username={username} role={role}>
               <div className='mt-4'>
                 <button className={buttonClass} onClick={signOut}>
                   Sign Out
@@ -214,10 +219,10 @@ function Dashboard({token=AUTH }) {
               </Box>
             </div>
             
-            {kelolaKaryawanPage ?  <KelolaKaryawan className="bg-black" token={token} role={role.current} /> : null }
-            {kelolaPenyewaPage ?  <KelolaPenyewa token={token} role={role.current} /> : null }
-            {kelolaKendaraanPage ?  <KelolaKendaraan className="bg-black" role={role.current}  /> : null }
-            {kelolaTransaksiPage ?  <KelolaTransaksi token={token} role={role.current} /> : null }
+            {kelolaKaryawanPage ?  <KelolaKaryawan className="bg-black" token={token} role={role} /> : null }
+            {kelolaPenyewaPage ?  <KelolaPenyewa token={token} role={role} /> : null }
+            {kelolaKendaraanPage ?  <KelolaKendaraan className="bg-black" role={role}  /> : null }
+            {kelolaTransaksiPage ?  <KelolaTransaksi token={token} role={role} /> : null }
 
           </div>
         </main>
