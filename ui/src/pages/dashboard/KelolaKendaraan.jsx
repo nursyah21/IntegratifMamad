@@ -163,7 +163,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
       if(role != 'ADMIN') {
         url = '/kendaraan/hapus/'+props.id.id+'/true'
       }
-
+      
       await fetch(baseURL + url, {
         method: 'GET',
       })
@@ -455,7 +455,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
           {errorSearch != '' ? <div className='mt-2 text-sm text-center'>{errorSearch}</div> : null}
         </div>
 
-        {/* search2 */} 
+        {/* search2 */}
         { role === 'ADMIN' ?
           <div className='flex flex-col'>
             <div className='relative flex items-center '>

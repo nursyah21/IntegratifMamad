@@ -110,14 +110,17 @@ function ListData({token = AUTH, role='', data=[], setData}){
             <i className="fa fa-pencil mx-2" aria-hidden="true" />Edit
           </button>
         </div>
-        {/* <div className='hover:bg-gray-200 p-2'>
-          <button onClick={()=>{
-            setIsOpen(!isOpen)
-            setDialogProps({title:'Ubah Status', id:id})
-          }}>
-            <i className="fa fa-pencil mx-2" aria-hidden="true" />Ubah Status
-          </button>
-        </div> */}
+        {/* {
+          role === 'ADMIN '?
+            <div className='hover:bg-gray-200 p-2'>
+              <button onClick={()=>{
+                setIsOpen(!isOpen)
+                setDialogProps({title:'Ubah Status', id:id})
+              }}>
+                <i className="fa fa-pencil mx-2" aria-hidden="true" />Ubah Status
+              </button>
+            </div> : null
+        } */}
         <div className='hover:bg-gray-200 p-2'>
           <button onClick={()=>{
             setIsOpen(!isOpen)
@@ -477,6 +480,7 @@ export default function KelolaPenyewa({role}) {
   const [data, setData] = useState([])
 
   useEffect(()=>{
+    console.log(role)
     (async function(){
       setLoading(true)
       await fetchDataPenyewa(role.current).then(data=>{
