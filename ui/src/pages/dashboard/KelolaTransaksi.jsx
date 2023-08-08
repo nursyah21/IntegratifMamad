@@ -55,15 +55,23 @@ const CreateNew = ({token, setData, setIsOpen}) => {
         throw 'id pegawai not found'
       }
 
-      console.log(values)
+      // console.log(values)
       await fetch(baseURL+'/transaksi/baru', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(values)
-      }) .then(data => data.text()).catch(data => "")
-
+      }) .then(data => {
+        data.text()
+        console.log(data.type)
+        if(data.type === 'cors'){
+          alert('error: penyewa sedang memiliki transaksi aktif')
+        }
+      }).catch(data => {
+        ""
+      })
+      
       await fetchDataTransaksi(role.current).then(data=>{
         setData(data)
         setIsOpen(false)
