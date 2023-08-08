@@ -110,7 +110,9 @@ function ListData({token = AUTH, role='', data=[], setData}){
   const [isOpen, setIsOpen] = useState(false)
   const [dialogProps, setDialogProps] = useState({title:'', id:''})
   const searchValue = useRef()
+  const search2Value = useRef()
   const [errorSearch, setErrorSearch] = useState('')
+  const [errorSearch2, setErrorSearch2] = useState('')
 
   const Tooltip = (id) => (<Popover className="relative">
     <Popover.Button className={'border px-2 rounded-md bg-gray-200 border-gray-200 font-bold hover:bg-gray-100'}>:</Popover.Button>
@@ -376,6 +378,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
       }else{
         fetchDataKendaraanId(val)
         .then(data=>{
+          
           const temp = []
           temp.push(data)
           setData(temp)
@@ -385,23 +388,80 @@ function ListData({token = AUTH, role='', data=[], setData}){
     }
   }
 
+  const handleSearch2 = (event) => {
+    if (event.key === "Enter") {
+      const val1 = searchValue.current.value
+      const val = search2Value.current.value
+      setErrorSearch2('')
+      if(val1 == '' || isNaN(val1)){
+        setErrorSearch2("you must input value input search by id")
+        return
+      }
+      if(isNaN(val)){
+        setErrorSearch2("you must enter only number")
+        return
+      }
+      if(val === '') {
+        fetchDataKendaraan(role).then(data=>{
+          if(data.error){
+            setData([])
+          }else{
+            setData(data)
+          }
+        })
+      }else{
+        // console.log(baseURL + '/kendaraan/find-global/id:'+val1+'/v:'+val)
+        fetch(baseURL + '/kendaraan/find-global/id:'+val1+'/v:'+val,{
+            method: 'GET'
+        }).then(data=>{
+          if(data === null || data === '' || data.type === 'cors'){
+            setErrorSearch2(`version: ${val} not found`)
+            return
+          }
+          // console.log('as=>'+JSON.stringify(data))
+          const temp = []
+          // console.log(data)
+          temp.push(data)
+          setData(temp)
+        })
+        .catch(_=>setErrorSearch2(`version: ${val} not found`))
+      }
+    }
+  }
+
   // -------------------------------------------------------------
   
   return <>
   <div className='container px-4 mx-auto'>
     <div className='mt-6 md:flex md:items-center md:justify-between '>
-      {/* search */}
-      <div className='flex flex-col'>
-        <div className='relative flex items-center '>
-          <span className='absolute'>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 mx-3 text-gray-400 dark:text-gray-600">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
-            </svg>
-          </span>
-          <input ref={searchValue} className='block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg pl-11 md:w-80 focus:border-blue-300 focus:ring focus:outline-none' type="text" placeholder='search by id' onKeyDown={handleSearch}/>
+      <div className='flex gap-x-4'>
+        {/* search */}
+        <div className='flex flex-col'>
+          <div className='relative flex items-center '>
+            <span className='absolute'>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 mx-3 text-gray-400 dark:text-gray-600">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+              </svg>
+            </span>
+            <input ref={searchValue} className='block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg pl-11 md:w-80 focus:border-blue-300 focus:ring focus:outline-none' type="text" placeholder='search by id' onKeyDown={handleSearch}/>
+          </div>
+          {errorSearch != '' ? <div className='mt-2 text-sm text-center'>{errorSearch}</div> : null}
         </div>
-        {errorSearch != '' ? <div className='mt-2 text-sm text-center'>{errorSearch}</div> : null}
+
+        {/* search2 */}
+        <div className='flex flex-col'>
+          <div className='relative flex items-center '>
+            <span className='absolute'>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 mx-3 text-gray-400 dark:text-gray-600">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+              </svg>
+            </span>
+            <input ref={search2Value} className='block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg pl-11 md:w-80 focus:border-blue-300 focus:ring focus:outline-none' type="text" placeholder='search by version' onKeyDown={handleSearch2}/>
+          </div>
+          {errorSearch2 != '' ? <div className='mt-2 text-sm text-center'>{errorSearch2}</div> : null}
+        </div>
       </div>
+      
 
       {/* button */}
       <button onClick={()=>{

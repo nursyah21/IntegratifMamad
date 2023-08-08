@@ -94,6 +94,7 @@ function ListData({token = AUTH, role='', data=[], setData}){
   const [dialogProps, setDialogProps] = useState({title:'', id:''})
   const searchValue = useRef()
   const [errorSearch, setErrorSearch] = useState('')
+  
   const [loading, setLoading] = useState(false)
 
   const Tooltip = (id) => (<Popover className="relative">
